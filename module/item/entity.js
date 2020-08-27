@@ -26,8 +26,8 @@ export default class Item5e extends Item {
     else if (this.actor) {
       const actorData = this.actor.data.data;
 
-      // Spells - Use Actor spellcasting modifier
-      if (this.data.type === "spell") return actorData.attributes.spellcasting || "int";
+      // Powers - Use Actor powercasting modifier
+      if (this.data.type === "power") return actorData.attributes.powercasting || "int";
 
       // Tools - default to Intelligence
       else if (this.data.type === "tool") return "int";
@@ -123,7 +123,7 @@ export default class Item5e extends Item {
    */
   get hasAreaTarget() {
     const target = this.data.data.target;
-    return target && (target.type in CONFIG.DND5E.areaTargetTypes);
+    return target && (target.type in CONFIG.OrinsGate.areaTargetTypes);
   }
 
   /* -------------------------------------------- */
@@ -152,7 +152,7 @@ export default class Item5e extends Item {
     const itemData = this.data;
     const actorData = this.actor ? this.actor.data : {};
     const data = itemData.data;
-    const C = CONFIG.DND5E;
+    const C = CONFIG.OrinsGate;
     const labels = {};
 
     // Classes
@@ -160,10 +160,10 @@ export default class Item5e extends Item {
       data.levels = Math.clamped(data.levels, 1, 20);
     }
 
-    // Spell Level,  School, and Components
-    if ( itemData.type === "spell" ) {
-      labels.level = C.spellLevels[data.level];
-      labels.school = C.spellSchools[data.school];
+    // Power Level,  School, and Components
+    if ( itemData.type === "power" ) {
+      labels.level = C.powerLevels[data.level];
+      labels.school = C.powerSchools[data.school];
       labels.components = Object.entries(data.components).reduce((arr, c) => {
         if ( c[1] !== true ) return arr;
         arr.push(c[0].titleCase().slice(0, 1));
@@ -175,15 +175,15 @@ export default class Item5e extends Item {
     // Feat Items
     else if ( itemData.type === "feat" ) {
       const act = data.activation;
-      if ( act && (act.type === C.abilityActivationTypes.legendary) ) labels.featType = game.i18n.localize("DND5E.LegendaryActionLabel");
-      else if ( act && (act.type === C.abilityActivationTypes.lair) ) labels.featType = game.i18n.localize("DND5E.LairActionLabel");
-      else if ( act && act.type ) labels.featType = game.i18n.localize(data.damage.length ? "DND5E.Attack" : "DND5E.Action");
-      else labels.featType = game.i18n.localize("DND5E.Passive");
+      if ( act && (act.type === C.abilityActivationTypes.legendary) ) labels.featType = game.i18n.localize("OrinsGate.LegendaryActionLabel");
+      else if ( act && (act.type === C.abilityActivationTypes.lair) ) labels.featType = game.i18n.localize("OrinsGate.LairActionLabel");
+      else if ( act && act.type ) labels.featType = game.i18n.localize(data.damage.length ? "OrinsGate.Attack" : "OrinsGate.Action");
+      else labels.featType = game.i18n.localize("OrinsGate.Passive");
     }
 
     // Equipment Items
     else if ( itemData.type === "equipment" ) {
-      labels.armor = data.armor.value ? `${data.armor.value} ${game.i18n.localize("DND5E.AC")}` : "";
+      labels.armor = data.armor.value ? `${data.armor.value} ${game.i18n.localize("OrinsGate.AC")}` : "";
     }
 
     // Activated Items
@@ -217,7 +217,7 @@ export default class Item5e extends Item {
 
       // Recharge Label
       let chg = data.recharge || {};
-      labels.recharge = `${game.i18n.localize("DND5E.Recharge")} [${chg.value}${parseInt(chg.value) < 6 ? "+" : ""}]`;
+      labels.recharge = `${game.i18n.localize("OrinsGate.Recharge")} [${chg.value}${parseInt(chg.value) < 6 ? "+" : ""}]`;
     }
 
     // Item Actions
@@ -227,12 +227,12 @@ export default class Item5e extends Item {
       let save = data.save || {};
       if ( !save.ability ) save.dc = null;
       else if ( this.isOwned ) { // Actor owned items
-        if ( save.scaling === "spell" ) save.dc = actorData.data.attributes.spelldc;
-        else if ( save.scaling !== "flat" ) save.dc = this.actor.getSpellDC(save.scaling);
+        if ( save.scaling === "power" ) save.dc = actorData.data.attributes.powerdc;
+        else if ( save.scaling !== "flat" ) save.dc = this.actor.getPowerDC(save.scaling);
       } else { // Un-owned items
         if ( save.scaling !== "flat" ) save.dc = null;
       }
-      labels.save = save.ability ? `${game.i18n.localize("DND5E.AbbreviationDC")} ${save.dc || ""} ${C.abilities[save.ability]}` : "";
+      labels.save = save.ability ? `${game.i18n.localize("OrinsGate.AbbreviationDC")} ${save.dc || ""} ${C.abilities[save.ability]}` : "";
 
       // Damage
       let dam = data.damage || {};
@@ -270,7 +270,7 @@ export default class Item5e extends Item {
       isHealing: this.isHealing,
       hasDamage: this.hasDamage,
       isVersatile: this.isVersatile,
-      isSpell: this.data.type === "spell",
+      isPower: this.data.type === "power",
       hasSave: this.hasSave,
       hasAreaTarget: this.hasAreaTarget
     };
@@ -290,7 +290,7 @@ export default class Item5e extends Item {
 
     // Render the chat card template
     const templateType = ["tool"].includes(this.data.type) ? this.data.type : "item";
-    const template = `systems/dnd5e/templates/chat/${templateType}-card.html`;
+    const template = `systems/orinsgate/templates/chat/${templateType}-card.html`;
     const html = await renderTemplate(template, templateData);
 
     // Basic chat message data
@@ -335,7 +335,7 @@ export default class Item5e extends Item {
     const consume = itemData.consume || {};
     if ( !consume.type ) return true;
     const actor = this.actor;
-    const typeLabel = CONFIG.DND5E.abilityConsumptionTypes[consume.type];
+    const typeLabel = CONFIG.OrinsGate.abilityConsumptionTypes[consume.type];
     const amount = parseInt(consume.amount || 1);
 
     // Only handle certain types for certain actions
@@ -343,7 +343,7 @@ export default class Item5e extends Item {
 
     // No consumed target set
     if ( !consume.target ) {
-      ui.notifications.warn(game.i18n.format("DND5E.ConsumeWarningNoResource", {name: this.name, type: typeLabel}));
+      ui.notifications.warn(game.i18n.format("OrinsGate.ConsumeWarningNoResource", {name: this.name, type: typeLabel}));
       return false;
     }
 
@@ -368,12 +368,12 @@ export default class Item5e extends Item {
 
     // Verify that the consumed resource is available
     if ( [null, undefined].includes(consumed) ) {
-      ui.notifications.warn(game.i18n.format("DND5E.ConsumeWarningNoSource", {name: this.name, type: typeLabel}));
+      ui.notifications.warn(game.i18n.format("OrinsGate.ConsumeWarningNoSource", {name: this.name, type: typeLabel}));
       return false;
     }
     let remaining = quantity - amount;
     if ( remaining < 0) {
-      ui.notifications.warn(game.i18n.format("DND5E.ConsumeWarningNoQuantity", {name: this.name, type: typeLabel}));
+      ui.notifications.warn(game.i18n.format("OrinsGate.ConsumeWarningNoQuantity", {name: this.name, type: typeLabel}));
       return false;
     }
 
@@ -422,14 +422,14 @@ export default class Item5e extends Item {
     const current = getProperty(this.data, "data.uses.value") || 0;
     if ( consume && charge.value ) {
       if ( !charge.charged ) {
-        ui.notifications.warn(game.i18n.format("DND5E.ItemNoUses", {name: this.name}));
+        ui.notifications.warn(game.i18n.format("OrinsGate.ItemNoUses", {name: this.name}));
         return false;
       }
       else await this.update({"data.recharge.charged": false});
     }
     else if ( consume && usesCharges ) {
       if ( uses.value <= 0 ) {
-        ui.notifications.warn(game.i18n.format("DND5E.ItemNoUses", {name: this.name}));
+        ui.notifications.warn(game.i18n.format("OrinsGate.ItemNoUses", {name: this.name}));
         return false;
       }
       await this.update({"data.uses.value": Math.max(current - 1, 0)});
@@ -468,8 +468,8 @@ export default class Item5e extends Item {
     // General equipment properties
     if ( data.hasOwnProperty("equipped") && !["loot", "tool"].includes(this.data.type) ) {
       props.push(
-        game.i18n.localize(data.equipped ? "DND5E.Equipped" : "DND5E.Unequipped"),
-        game.i18n.localize(data.proficient ? "DND5E.Proficient" : "DND5E.NotProficient"),
+        game.i18n.localize(data.equipped ? "OrinsGate.Equipped" : "OrinsGate.Unequipped"),
+        game.i18n.localize(data.proficient ? "OrinsGate.Proficient" : "OrinsGate.NotProficient"),
       );
     }
 
@@ -496,9 +496,9 @@ export default class Item5e extends Item {
    */
   _equipmentChatData(data, labels, props) {
     props.push(
-      CONFIG.DND5E.equipmentTypes[data.armor.type],
+      CONFIG.OrinsGate.equipmentTypes[data.armor.type],
       labels.armor || null,
-      data.stealth.value ? game.i18n.localize("DND5E.StealthDisadvantage") : null
+      data.stealth.value ? game.i18n.localize("OrinsGate.StealthDisadvantage") : null
     );
   }
 
@@ -510,7 +510,7 @@ export default class Item5e extends Item {
    */
   _weaponChatData(data, labels, props) {
     props.push(
-      CONFIG.DND5E.weaponTypes[data.weaponType],
+      CONFIG.OrinsGate.weaponTypes[data.weaponType],
     );
   }
 
@@ -522,8 +522,8 @@ export default class Item5e extends Item {
    */
   _consumableChatData(data, labels, props) {
     props.push(
-      CONFIG.DND5E.consumableTypes[data.consumableType],
-      data.uses.value + "/" + data.uses.max + " " + game.i18n.localize("DND5E.Charges")
+      CONFIG.OrinsGate.consumableTypes[data.consumableType],
+      data.uses.value + "/" + data.uses.max + " " + game.i18n.localize("OrinsGate.Charges")
     );
     data.hasCharges = data.uses.value >= 0;
   }
@@ -536,8 +536,8 @@ export default class Item5e extends Item {
    */
   _toolChatData(data, labels, props) {
     props.push(
-      CONFIG.DND5E.abilities[data.ability] || null,
-      CONFIG.DND5E.proficiencyLevels[data.proficient || 0]
+      CONFIG.OrinsGate.abilities[data.ability] || null,
+      CONFIG.OrinsGate.proficiencyLevels[data.proficient || 0]
     );
   }
 
@@ -549,19 +549,19 @@ export default class Item5e extends Item {
    */
   _lootChatData(data, labels, props) {
     props.push(
-      game.i18n.localize("DND5E.ItemTypeLoot"),
-      data.weight ? data.weight + " " + game.i18n.localize("DND5E.AbbreviationLbs") : null
+      game.i18n.localize("OrinsGate.ItemTypeLoot"),
+      data.weight ? data.weight + " " + game.i18n.localize("OrinsGate.AbbreviationLbs") : null
     );
   }
 
   /* -------------------------------------------- */
 
   /**
-   * Render a chat card for Spell type data
+   * Render a chat card for Power type data
    * @return {Object}
    * @private
    */
-  _spellChatData(data, labels, props) {
+  _powerChatData(data, labels, props) {
     props.push(
       labels.level,
       labels.components + (labels.materials ? ` (${labels.materials})` : "")
@@ -583,7 +583,7 @@ export default class Item5e extends Item {
   /* -------------------------------------------- */
 
   /**
-   * Place an attack roll using an item (weapon, feat, spell, or equipment)
+   * Place an attack roll using an item (weapon, feat, power, or equipment)
    * Rely upon the d20Roll logic for the core implementation
    *
    * @param {object} options        Roll options which are configured and provided to the d20Roll function
@@ -592,11 +592,11 @@ export default class Item5e extends Item {
   async rollAttack(options={}) {
     const itemData = this.data.data;
     const actorData = this.actor.data.data;
-    const flags = this.actor.data.flags.dnd5e || {};
+    const flags = this.actor.data.flags.orinsgate || {};
     if ( !this.hasAttack ) {
       throw new Error("You may not place an Attack Roll with this Item.");
     }
-    let title = `${this.name} - ${game.i18n.localize("DND5E.AttackRoll")}`;
+    let title = `${this.name} - ${game.i18n.localize("OrinsGate.AttackRoll")}`;
     const rollData = this.getRollData();
 
     // Define Roll bonuses
@@ -641,7 +641,7 @@ export default class Item5e extends Item {
         top: options.event ? options.event.clientY - 80 : null,
         left: window.innerWidth - 710
       },
-      messageData: {"flags.dnd5e.roll": {type: "attack", itemId: this.id }}
+      messageData: {"flags.orinsgate.roll": {type: "attack", itemId: this.id }}
     }, options);
     rollConfig.event = options.event;
 
@@ -651,7 +651,7 @@ export default class Item5e extends Item {
     }
 
     // Elven Accuracy
-    if ( ["weapon", "spell"].includes(this.data.type) ) {
+    if ( ["weapon", "power"].includes(this.data.type) ) {
       if (flags.elvenAccuracy && ["dex", "int", "wis", "cha"].includes(this.abilityMod)) {
         rollConfig.elvenAccuracy = true;
       }
@@ -673,25 +673,25 @@ export default class Item5e extends Item {
   /* -------------------------------------------- */
 
   /**
-   * Place a damage roll using an item (weapon, feat, spell, or equipment)
+   * Place a damage roll using an item (weapon, feat, power, or equipment)
    * Rely upon the damageRoll logic for the core implementation
    *
    * @return {Promise<Roll>}   A Promise which resolves to the created Roll instance
    */
-  rollDamage({event, spellLevel=null, versatile=false}={}) {
+  rollDamage({event, powerLevel=null, versatile=false}={}) {
     const itemData = this.data.data;
     const actorData = this.actor.data.data;
     if ( !this.hasDamage ) {
       throw new Error("You may not make a Damage Roll with this Item.");
     }
-    const messageData = {"flags.dnd5e.roll": {type: "damage", itemId: this.id }};
+    const messageData = {"flags.orinsgate.roll": {type: "damage", itemId: this.id }};
 
     // Get roll data
     const rollData = this.getRollData();
-    if ( spellLevel ) rollData.item.level = spellLevel;
+    if ( powerLevel ) rollData.item.level = powerLevel;
 
     // Get message labels
-    const title = `${this.name} - ${game.i18n.localize("DND5E.DamageRoll")}`;
+    const title = `${this.name} - ${game.i18n.localize("OrinsGate.DamageRoll")}`;
     let flavor = this.labels.damageTypes.length ? `${title} (${this.labels.damageTypes})` : title;
 
     // Define Roll parts
@@ -700,18 +700,18 @@ export default class Item5e extends Item {
     // Adjust damage from versatile usage
     if ( versatile && itemData.damage.versatile ) {
       parts[0] = itemData.damage.versatile;
-      messageData["flags.dnd5e.roll"].versatile = true;
+      messageData["flags.orinsgate.roll"].versatile = true;
     }
 
-    // Scale damage from up-casting spells
-    if ( (this.data.type === "spell") ) {
+    // Scale damage from up-casting powers
+    if ( (this.data.type === "power") ) {
       if ( (itemData.scaling.mode === "cantrip") ) {
-        const level = this.actor.data.type === "character" ? actorData.details.level : actorData.details.spellLevel;
+        const level = this.actor.data.type === "character" ? actorData.details.level : actorData.details.powerLevel;
         this._scaleCantripDamage(parts, itemData.scaling.formula, level, rollData);
       }
-      else if ( spellLevel && (itemData.scaling.mode === "level") && itemData.scaling.formula ) {
+      else if ( powerLevel && (itemData.scaling.mode === "level") && itemData.scaling.formula ) {
         const scaling = itemData.scaling.formula;
-        this._scaleSpellDamage(parts, itemData.level, spellLevel, scaling, rollData);
+        this._scalePowerDamage(parts, itemData.level, powerLevel, scaling, rollData);
       }
     }
 
@@ -778,17 +778,17 @@ export default class Item5e extends Item {
   /* -------------------------------------------- */
 
   /**
-   * Adjust the spell damage formula to scale it for spell level up-casting
+   * Adjust the power damage formula to scale it for power level up-casting
    * @param {Array} parts         The original damage parts
-   * @param {number} baseLevel    The default spell level
-   * @param {number} spellLevel   The casted spell level
+   * @param {number} baseLevel    The default power level
+   * @param {number} powerLevel   The casted power level
    * @param {string} formula      The scaling formula
    * @param {object} rollData     A data object that should be applied to the scaled damage roll
    * @return {string[]}           The scaled roll parts
    * @private
    */
-  _scaleSpellDamage(parts, baseLevel, spellLevel, formula, rollData) {
-    const upcastLevels = Math.max(spellLevel - baseLevel, 0);
+  _scalePowerDamage(parts, baseLevel, powerLevel, formula, rollData) {
+    const upcastLevels = Math.max(powerLevel - baseLevel, 0);
     if ( upcastLevels === 0 ) return parts;
 
     // FUTURE SOLUTION - 0.7.0 AND LATER
@@ -844,7 +844,7 @@ export default class Item5e extends Item {
   /* -------------------------------------------- */
 
   /**
-   * Place an attack roll using an item (weapon, feat, spell, or equipment)
+   * Place an attack roll using an item (weapon, feat, power, or equipment)
    * Rely upon the d20Roll logic for the core implementation
    *
    * @return {Promise.<Roll>}   A Promise which resolves to the created Roll instance
@@ -856,8 +856,8 @@ export default class Item5e extends Item {
 
     // Define Roll Data
     const rollData = this.getRollData();
-    if ( options.spellLevel ) rollData.item.level = options.spellLevel;
-    const title = `${this.name} - ${game.i18n.localize("DND5E.OtherFormula")}`;
+    if ( options.powerLevel ) rollData.item.level = options.powerLevel;
+    const title = `${this.name} - ${game.i18n.localize("OrinsGate.OtherFormula")}`;
 
     // Invoke the roll and submit it to chat
     const roll = new Roll(rollData.item.formula, rollData).roll();
@@ -865,7 +865,7 @@ export default class Item5e extends Item {
       speaker: ChatMessage.getSpeaker({actor: this.actor}),
       flavor: this.data.data.chatFlavor || title,
       rollMode: game.settings.get("core", "rollMode"),
-      messageData: {"flags.dnd5e.roll": {type: "other", itemId: this.id }}
+      messageData: {"flags.orinsgate.roll": {type: "other", itemId: this.id }}
     });
     return roll;
   }
@@ -924,7 +924,7 @@ export default class Item5e extends Item {
         }
         // Case 5, item unusable, display warning and do nothing
         else {
-          ui.notifications.warn(game.i18n.format("DND5E.ItemNoUses", {name: this.name}));
+          ui.notifications.warn(game.i18n.format("OrinsGate.ItemNoUses", {name: this.name}));
         }
       }
     }
@@ -954,7 +954,7 @@ export default class Item5e extends Item {
 
     // Display a Chat Message
     const promises = [roll.toMessage({
-      flavor: `${game.i18n.format("DND5E.ItemRechargeCheck", {name: this.name})} - ${game.i18n.localize(success ? "DND5E.ItemRechargeSuccess" : "DND5E.ItemRechargeFailure")}`,
+      flavor: `${game.i18n.format("OrinsGate.ItemRechargeCheck", {name: this.name})} - ${game.i18n.localize(success ? "OrinsGate.ItemRechargeSuccess" : "OrinsGate.ItemRechargeFailure")}`,
       speaker: ChatMessage.getSpeaker({actor: this.actor, token: this.actor.token})
     })];
 
@@ -976,23 +976,23 @@ export default class Item5e extends Item {
     // Prepare roll data
     let rollData = this.getRollData();
     const parts = [`@mod`, "@prof"];
-    const title = `${this.name} - ${game.i18n.localize("DND5E.ToolCheck")}`;
+    const title = `${this.name} - ${game.i18n.localize("OrinsGate.ToolCheck")}`;
 
     // Compose the roll data
     const rollConfig = mergeObject({
       parts: parts,
       data: rollData,
-      template: "systems/dnd5e/templates/chat/tool-roll-dialog.html",
+      template: "systems/orinsgate/templates/chat/tool-roll-dialog.html",
       title: title,
       speaker: ChatMessage.getSpeaker({actor: this.actor}),
-      flavor: `${this.name} - ${game.i18n.localize("DND5E.ToolCheck")}`,
+      flavor: `${this.name} - ${game.i18n.localize("OrinsGate.ToolCheck")}`,
       dialogOptions: {
         width: 400,
         top: options.event ? options.event.clientY - 80 : null,
         left: window.innerWidth - 710,
       },
-      halflingLucky: this.actor.getFlag("dnd5e", "halflingLucky" ) || false,
-      messageData: {"flags.dnd5e.roll": {type: "tool", itemId: this.id }}
+      halflingLucky: this.actor.getFlag("orinsgate", "halflingLucky" ) || false,
+      messageData: {"flags.orinsgate.roll": {type: "tool", itemId: this.id }}
     }, options);
     rollConfig.event = options.event;
 
@@ -1063,25 +1063,25 @@ export default class Item5e extends Item {
     // Get the Item
     const item = actor.getOwnedItem(card.dataset.itemId);
     if ( !item ) {
-      return ui.notifications.error(game.i18n.format("DND5E.ActionWarningNoItem", {item: card.dataset.itemId, name: actor.name}))
+      return ui.notifications.error(game.i18n.format("OrinsGate.ActionWarningNoItem", {item: card.dataset.itemId, name: actor.name}))
     }
-    const spellLevel = parseInt(card.dataset.spellLevel) || null;
+    const powerLevel = parseInt(card.dataset.powerLevel) || null;
 
     // Get card targets
     let targets = [];
     if ( isTargetted ) {
       targets = this._getChatCardTargets(card);
       if ( !targets.length ) {
-        ui.notifications.warn(game.i18n.localize("DND5E.ActionWarningNoToken"));
+        ui.notifications.warn(game.i18n.localize("OrinsGate.ActionWarningNoToken"));
         return button.disabled = false;
       }
     }
 
     // Attack and Damage Rolls
     if ( action === "attack" ) await item.rollAttack({event});
-    else if ( action === "damage" ) await item.rollDamage({event, spellLevel});
-    else if ( action === "versatile" ) await item.rollDamage({event, spellLevel, versatile: true});
-    else if ( action === "formula" ) await item.rollFormula({event, spellLevel});
+    else if ( action === "damage" ) await item.rollDamage({event, powerLevel});
+    else if ( action === "versatile" ) await item.rollDamage({event, powerLevel, versatile: true});
+    else if ( action === "formula" ) await item.rollFormula({event, powerLevel});
 
     // Saving Throws for card targets
     else if ( action === "save" ) {
@@ -1094,7 +1094,7 @@ export default class Item5e extends Item {
     // Tool usage
     else if ( action === "toolCheck" ) await item.rollToolCheck({event});
 
-    // Spell Template Creation
+    // Power Template Creation
     else if ( action === "placeTemplate") {
       const template = AbilityTemplate.fromItem(item);
       if ( template ) template.drawPreview(event);
@@ -1167,19 +1167,19 @@ export default class Item5e extends Item {
   /* -------------------------------------------- */
 
   /**
-   * Create a consumable spell scroll Item from a spell Item.
-   * @param {Item5e} spell      The spell to be made into a scroll
+   * Create a consumable power scroll Item from a power Item.
+   * @param {Item5e} power      The power to be made into a scroll
    * @return {Item5e}           The created scroll consumable item
    * @private
    */
-  static async createScrollFromSpell(spell) {
+  static async createScrollFromPower(power) {
 
-    // Get spell data
-    const itemData = spell instanceof Item5e ? spell.data : spell;
+    // Get power data
+    const itemData = power instanceof Item5e ? power.data : power;
     const {actionType, description, source, activation, duration, target, range, damage, save, level} = itemData.data;
 
     // Get scroll data
-    const scrollUuid = CONFIG.DND5E.spellScrollIds[level];
+    const scrollUuid = CONFIG.OrinsGate.powerScrollIds[level];
     const scrollItem = await fromUuid(scrollUuid);
     const scrollData = scrollItem.data;
     delete scrollData._id;
@@ -1191,12 +1191,12 @@ export default class Item5e extends Item {
     const scrollIntro = scrollDescription.slice(0, scrollIntroEnd + pdel.length);
     const scrollDetails = scrollDescription.slice(scrollIntroEnd + pdel.length);
 
-    // Create a composite description from the scroll description and the spell details
+    // Create a composite description from the scroll description and the power details
     const desc = `${scrollIntro}<hr/><h3>${itemData.name} (Level ${level})</h3><hr/>${description.value}<hr/><h3>Scroll Details</h3><hr/>${scrollDetails}`;
 
-    // Create the spell scroll data
-    const spellScrollData = mergeObject(scrollData, {
-      name: `${game.i18n.localize("DND5E.SpellScroll")}: ${itemData.name}`,
+    // Create the power scroll data
+    const powerScrollData = mergeObject(scrollData, {
+      name: `${game.i18n.localize("OrinsGate.PowerScroll")}: ${itemData.name}`,
       img: itemData.img,
       data: {
         "description.value": desc.trim(),
@@ -1211,6 +1211,6 @@ export default class Item5e extends Item {
         level
       }
     });
-    return new this(spellScrollData);
+    return new this(powerScrollData);
   }
 }

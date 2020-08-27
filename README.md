@@ -7,7 +7,7 @@ This system is offered and may be used under the terms of the Open Gaming Licens
 [Systems Reference Document 5.1 (SRD5)](http://media.wizards.com/2016/downloads/DND/SRD-OGL_V5.1.pdf).
 
 This system provides character sheet support for Actors and Items, mechanical support for dice and rules necessary to
-play games of 5th Edition, and compendium content for Monsters, Heroes, Items, Spells, Class Features, Monster 
+play games of 5th Edition, and compendium content for Monsters, Heroes, Items, Powers, Class Features, Monster 
 Features, and more!
 
 The software component of this system is distributed under the GNUv3 license.
@@ -17,11 +17,11 @@ The software component of this system is distributed under the GNUv3 license.
 To install and use the DnD5e system for Foundry Virtual Tabletop, simply paste the following URL into the 
 **Install System** dialog on the Setup menu of the application.
 
-https://gitlab.com/foundrynet/dnd5e/raw/master/system.json
+https://gitlab.com/foundrynet/orinsgate/raw/master/system.json
 
-If you wish to manually install the system, you must clone or extract it into the ``Data/systems/dnd5e`` folder. You
+If you wish to manually install the system, you must clone or extract it into the ``Data/systems/orinsgate`` folder. You
 may do this by cloning the repository or downloading a zip archive from the
-[Releases Page](https://gitlab.com/foundrynet/dnd5e/-/releases).
+[Releases Page](https://gitlab.com/foundrynet/orinsgate/-/releases).
 
 ## Community Contribution
 

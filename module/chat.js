@@ -31,7 +31,7 @@ export const highlightCriticalSuccessFailure = function(message, html, data) {
  * Optionally hide the display of chat card action buttons which cannot be performed by the user
  */
 export const displayChatActionButtons = function(message, html, data) {
-  const chatCard = html.find(".dnd5e.chat-card");
+  const chatCard = html.find(".orinsgate.chat-card");
   if ( chatCard.length > 0 ) {
 
     // If the user is the message author or the actor owner, proceed
@@ -66,25 +66,25 @@ export const addChatMessageContextOptions = function(html, options) {
   };
   options.push(
     {
-      name: game.i18n.localize("DND5E.ChatContextDamage"),
+      name: game.i18n.localize("OrinsGate.ChatContextDamage"),
       icon: '<i class="fas fa-user-minus"></i>',
       condition: canApply,
       callback: li => applyChatCardDamage(li, 1)
     },
     {
-      name: game.i18n.localize("DND5E.ChatContextHealing"),
+      name: game.i18n.localize("OrinsGate.ChatContextHealing"),
       icon: '<i class="fas fa-user-plus"></i>',
       condition: canApply,
       callback: li => applyChatCardDamage(li, -1)
     },
     {
-      name: game.i18n.localize("DND5E.ChatContextDoubleDamage"),
+      name: game.i18n.localize("OrinsGate.ChatContextDoubleDamage"),
       icon: '<i class="fas fa-user-injured"></i>',
       condition: canApply,
       callback: li => applyChatCardDamage(li, 2)
     },
     {
-      name: game.i18n.localize("DND5E.ChatContextHalfDamage"),
+      name: game.i18n.localize("OrinsGate.ChatContextHalfDamage"),
       icon: '<i class="fas fa-user-shield"></i>',
       condition: canApply,
       callback: li => applyChatCardDamage(li, 0.5)

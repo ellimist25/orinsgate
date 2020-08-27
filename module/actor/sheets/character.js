@@ -13,7 +13,7 @@ export default class ActorSheet5eCharacter extends ActorSheet5e {
    */
 	static get defaultOptions() {
 	  return mergeObject(super.defaultOptions, {
-      classes: ["dnd5e", "sheet", "actor", "character"],
+      classes: ["orinsgate", "sheet", "actor", "character"],
       width: 720,
       height: 680
     });
@@ -36,14 +36,14 @@ export default class ActorSheet5eCharacter extends ActorSheet5e {
     sheetData["resources"] = ["primary", "secondary", "tertiary"].reduce((arr, r) => {
       const res = sheetData.data.resources[r] || {};
       res.name = r;
-      res.placeholder = game.i18n.localize("DND5E.Resource"+r.titleCase());
+      res.placeholder = game.i18n.localize("OrinsGate.Resource"+r.titleCase());
       if (res && res.value === 0) delete res.value;
       if (res && res.max === 0) delete res.max;
       return arr.concat([res]);
     }, []);
 
     // Experience Tracking
-    sheetData["disableExperience"] = game.settings.get("dnd5e", "disableExperienceTracking");
+    sheetData["disableExperience"] = game.settings.get("orinsgate", "disableExperienceTracking");
     sheetData["classLabels"] = this.actor.itemTypes.class.map(c => c.name).join(", ");
 
     // Return data for rendering
@@ -58,18 +58,18 @@ export default class ActorSheet5eCharacter extends ActorSheet5e {
    */
   _prepareItems(data) {
 
-    // Categorize items as inventory, spellbook, features, and classes
+    // Categorize items as inventory, powerbook, features, and classes
     const inventory = {
-      weapon: { label: "DND5E.ItemTypeWeaponPl", items: [], dataset: {type: "weapon"} },
-      equipment: { label: "DND5E.ItemTypeEquipmentPl", items: [], dataset: {type: "equipment"} },
-      consumable: { label: "DND5E.ItemTypeConsumablePl", items: [], dataset: {type: "consumable"} },
-      tool: { label: "DND5E.ItemTypeToolPl", items: [], dataset: {type: "tool"} },
-      backpack: { label: "DND5E.ItemTypeContainerPl", items: [], dataset: {type: "backpack"} },
-      loot: { label: "DND5E.ItemTypeLootPl", items: [], dataset: {type: "loot"} }
+      weapon: { label: "OrinsGate.ItemTypeWeaponPl", items: [], dataset: {type: "weapon"} },
+      equipment: { label: "OrinsGate.ItemTypeEquipmentPl", items: [], dataset: {type: "equipment"} },
+      consumable: { label: "OrinsGate.ItemTypeConsumablePl", items: [], dataset: {type: "consumable"} },
+      tool: { label: "OrinsGate.ItemTypeToolPl", items: [], dataset: {type: "tool"} },
+      backpack: { label: "OrinsGate.ItemTypeContainerPl", items: [], dataset: {type: "backpack"} },
+      loot: { label: "OrinsGate.ItemTypeLootPl", items: [], dataset: {type: "loot"} }
     };
 
     // Partition items by category
-    let [items, spells, feats, classes] = data.items.reduce((arr, item) => {
+    let [items, powers, feats, classes] = data.items.reduce((arr, item) => {
 
       // Item details
       item.img = item.img || DEFAULT_TOKEN;
@@ -85,7 +85,7 @@ export default class ActorSheet5eCharacter extends ActorSheet5e {
       this._prepareItemToggleState(item);
 
       // Classify items into types
-      if ( item.type === "spell" ) arr[1].push(item);
+      if ( item.type === "power" ) arr[1].push(item);
       else if ( item.type === "feat" ) arr[2].push(item);
       else if ( item.type === "class" ) arr[3].push(item);
       else if ( Object.keys(inventory).includes(item.type ) ) arr[0].push(item);
@@ -94,7 +94,7 @@ export default class ActorSheet5eCharacter extends ActorSheet5e {
 
     // Apply active item filters
     items = this._filterItems(items, this._filters.inventory);
-    spells = this._filterItems(spells, this._filters.spellbook);
+    powers = this._filterItems(powers, this._filters.powerbook);
     feats = this._filterItems(feats, this._filters.features);
 
     // Organize items
@@ -105,17 +105,17 @@ export default class ActorSheet5eCharacter extends ActorSheet5e {
       inventory[i.type].items.push(i);
     }
 
-    // Organize Spellbook and count the number of prepared spells (excluding always, at will, etc...)
-    const spellbook = this._prepareSpellbook(data, spells);
-    const nPrepared = spells.filter(s => {
+    // Organize Powerbook and count the number of prepared powers (excluding always, at will, etc...)
+    const powerbook = this._preparePowerbook(data, powers);
+    const nPrepared = powers.filter(s => {
       return (s.data.level > 0) && (s.data.preparation.mode === "prepared") && s.data.preparation.prepared;
     }).length;
 
     // Organize Features
     const features = {
-      classes: { label: "DND5E.ItemTypeClassPl", items: [], hasActions: false, dataset: {type: "class"}, isClass: true },
-      active: { label: "DND5E.FeatureActive", items: [], hasActions: true, dataset: {type: "feat", "activation.type": "action"} },
-      passive: { label: "DND5E.FeaturePassive", items: [], hasActions: false, dataset: {type: "feat"} }
+      classes: { label: "OrinsGate.ItemTypeClassPl", items: [], hasActions: false, dataset: {type: "class"}, isClass: true },
+      active: { label: "OrinsGate.FeatureActive", items: [], hasActions: true, dataset: {type: "feat", "activation.type": "action"} },
+      passive: { label: "OrinsGate.FeaturePassive", items: [], hasActions: false, dataset: {type: "feat"} }
     };
     for ( let f of feats ) {
       if ( f.data.activation.type ) features.active.items.push(f);
@@ -126,8 +126,8 @@ export default class ActorSheet5eCharacter extends ActorSheet5e {
 
     // Assign and return
     data.inventory = Object.values(inventory);
-    data.spellbook = spellbook;
-    data.preparedSpells = nPrepared;
+    data.powerbook = powerbook;
+    data.preparedPowers = nPrepared;
     data.features = Object.values(features);
   }
 
@@ -139,19 +139,19 @@ export default class ActorSheet5eCharacter extends ActorSheet5e {
    * @private
    */
   _prepareItemToggleState(item) {
-    if (item.type === "spell") {
+    if (item.type === "power") {
       const isAlways = getProperty(item.data, "preparation.mode") === "always";
       const isPrepared =  getProperty(item.data, "preparation.prepared");
       item.toggleClass = isPrepared ? "active" : "";
       if ( isAlways ) item.toggleClass = "fixed";
-      if ( isAlways ) item.toggleTitle = CONFIG.DND5E.spellPreparationModes.always;
-      else if ( isPrepared ) item.toggleTitle = CONFIG.DND5E.spellPreparationModes.prepared;
-      else item.toggleTitle = game.i18n.localize("DND5E.SpellUnprepared");
+      if ( isAlways ) item.toggleTitle = CONFIG.OrinsGate.powerPreparationModes.always;
+      else if ( isPrepared ) item.toggleTitle = CONFIG.OrinsGate.powerPreparationModes.prepared;
+      else item.toggleTitle = game.i18n.localize("OrinsGate.PowerUnprepared");
     }
     else {
       const isActive = getProperty(item.data, "equipped");
       item.toggleClass = isActive ? "active" : "";
-      item.toggleTitle = game.i18n.localize(isActive ? "DND5E.Equipped" : "DND5E.Unequipped");
+      item.toggleTitle = game.i18n.localize(isActive ? "OrinsGate.Equipped" : "OrinsGate.Unequipped");
     }
   }
 
@@ -205,7 +205,7 @@ export default class ActorSheet5eCharacter extends ActorSheet5e {
     event.preventDefault();
     const itemId = event.currentTarget.closest(".item").dataset.itemId;
     const item = this.actor.getOwnedItem(itemId);
-    const attr = item.data.type === "spell" ? "data.preparation.prepared" : "data.equipped";
+    const attr = item.data.type === "power" ? "data.preparation.prepared" : "data.equipped";
     return item.update({[attr]: !getProperty(item.data, attr)});
   }
 
@@ -245,8 +245,8 @@ export default class ActorSheet5eCharacter extends ActorSheet5e {
   async _onConvertCurrency(event) {
     event.preventDefault();
     return Dialog.confirm({
-      title: `${game.i18n.localize("DND5E.CurrencyConvert")}`,
-      content: `<p>${game.i18n.localize("DND5E.CurrencyConvertHint")}</p>`,
+      title: `${game.i18n.localize("OrinsGate.CurrencyConvert")}`,
+      content: `<p>${game.i18n.localize("OrinsGate.CurrencyConvertHint")}</p>`,
       yes: () => this.actor.convertCurrency()
     });
   }

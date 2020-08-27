@@ -70,7 +70,7 @@ Hooks.once("init", function() {
   };
 
   // Record Configuration Values
-  CONFIG.OrinsGate = DND5E;
+  CONFIG.OrinsGate = OrinsGate;
   CONFIG.Actor.entityClass = Actor5e;
   CONFIG.Item.entityClass = Item5e;
 
@@ -108,7 +108,7 @@ Hooks.once("setup", function() {
   const toLocalize = [
     "abilities", "abilityAbbreviations", "alignments", "conditionTypes", "consumableTypes", "currencies",
     "damageTypes", "damageResistanceTypes", "distanceUnits", "equipmentTypes", "healingTypes", "itemActionTypes",
-    "limitedUsePeriods", "senses", "skills", "powerComponents", "spellLevels", "spellPreparationModes", "spellSchools",
+    "limitedUsePeriods", "senses", "skills", "powerComponents", "powerLevels", "powerPreparationModes", "powerSchools",
     "powerScalingModes", "targetTypes", "timePeriods", "weaponProperties", "weaponTypes", "languages",
     "polymorphSettings", "armorProficiencies", "weaponProficiencies", "toolProficiencies", "abilityActivationTypes",
     "abilityConsumptionTypes", "actorSizes", "proficiencyLevels", "cover"
@@ -117,7 +117,7 @@ Hooks.once("setup", function() {
   // Exclude some from sorting where the default order matters
   const noSort = [
     "abilities", "alignments", "currencies", "distanceUnits", "itemActionTypes", "proficiencyLevels",
-    "limitedUsePeriods", "powerComponents", "spellLevels", "weaponTypes"
+    "limitedUsePeriods", "powerComponents", "powerLevels", "weaponTypes"
   ];
 
   // Localize and sort CONFIG objects

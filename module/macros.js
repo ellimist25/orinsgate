@@ -16,7 +16,7 @@ export async function create5eMacro(data, slot) {
   const item = data.data;
 
   // Create the macro command
-  const command = `game.dnd5e.rollItemMacro("${item.name}");`;
+  const command = `game.orinsgate.rollItemMacro("${item.name}");`;
   let macro = game.macros.entities.find(m => (m.name === item.name) && (m.command === command));
   if ( !macro ) {
     macro = await Macro.create({
@@ -24,7 +24,7 @@ export async function create5eMacro(data, slot) {
       type: "script",
       img: item.img,
       command: command,
-      flags: {"dnd5e.itemMacro": true}
+      flags: {"orinsgate.itemMacro": true}
     });
   }
   game.user.assignHotbarMacro(macro, slot);
@@ -55,6 +55,6 @@ export function rollItemMacro(itemName) {
   const item = items[0];
 
   // Trigger the item roll
-  if ( item.data.type === "spell" ) return actor.useSpell(item);
+  if ( item.data.type === "power" ) return actor.usePower(item);
   return item.roll();
 }

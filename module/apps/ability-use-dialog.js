@@ -5,7 +5,7 @@
 export default class AbilityUseDialog extends Dialog {
   constructor(item, dialogData={}, options={}) {
     super(dialogData, options);
-    this.options.classes = ["dnd5e", "dialog"];
+    this.options.classes = ["orinsgate", "dialog"];
 
     /**
      * Store a reference to the Item entity being used
@@ -19,7 +19,7 @@ export default class AbilityUseDialog extends Dialog {
   /* -------------------------------------------- */
 
   /**
-   * A constructor function which displays the Spell Cast Dialog app for a given Actor and Item.
+   * A constructor function which displays the Power Cast Dialog app for a given Actor and Item.
    * Returns a Promise which resolves to the dialog FormData once the workflow has been completed.
    * @param {Item5e} item
    * @return {Promise}
@@ -38,21 +38,21 @@ export default class AbilityUseDialog extends Dialog {
     // Prepare dialog form data
     const data = {
       item: item.data,
-      title: game.i18n.format("DND5E.AbilityUseHint", item.data),
+      title: game.i18n.format("OrinsGate.AbilityUseHint", item.data),
       note: this._getAbilityUseNote(item.data, uses, recharge),
       hasLimitedUses: uses.max || recharges,
       canUse: recharges ? recharge.charged : (quantity > 0 && !uses.value) || uses.value > 0,
       hasPlaceableTemplate: game.user.can("TEMPLATE_CREATE") && item.hasAreaTarget,
       errors: []
     };
-    if ( item.data.type === "spell" ) this._getSpellData(actorData, itemData, data);
+    if ( item.data.type === "power" ) this._getPowerData(actorData, itemData, data);
 
     // Render the ability usage template
-    const html = await renderTemplate("systems/dnd5e/templates/apps/ability-use.html", data);
+    const html = await renderTemplate("systems/orinsgate/templates/apps/ability-use.html", data);
 
     // Create the Dialog and return as a Promise
-    const icon = data.hasSpellSlots ? "fa-magic" : "fa-fist-raised";
-    const label = game.i18n.localize("DND5E.AbilityUse" + (data.hasSpellSlots ? "Cast" : "Use"));
+    const icon = data.hasPowerSlots ? "fa-magic" : "fa-fist-raised";
+    const label = game.i18n.localize("OrinsGate.AbilityUse" + (data.hasPowerSlots ? "Cast" : "Use"));
     return new Promise((resolve) => {
       const dlg = new this(item, {
         title: `${item.name}: Usage Configuration`,
@@ -76,48 +76,48 @@ export default class AbilityUseDialog extends Dialog {
   /* -------------------------------------------- */
 
   /**
-   * Get dialog data related to limited spell slots
+   * Get dialog data related to limited power slots
    * @private
    */
-  static _getSpellData(actorData, itemData, data) {
+  static _getPowerData(actorData, itemData, data) {
 
-    // Determine whether the spell may be up-cast
+    // Determine whether the power may be up-cast
     const lvl = itemData.level;
-    const canUpcast = (lvl > 0) && CONFIG.DND5E.spellUpcastModes.includes(itemData.preparation.mode);
+    const canUpcast = (lvl > 0) && CONFIG.OrinsGate.powerUpcastModes.includes(itemData.preparation.mode);
 
     // Determine the levels which are feasible
     let lmax = 0;
-    const spellLevels = Array.fromRange(10).reduce((arr, i) => {
+    const powerLevels = Array.fromRange(10).reduce((arr, i) => {
       if ( i < lvl ) return arr;
-      const label = CONFIG.DND5E.spellLevels[i];
-      const l = actorData.spells["spell"+i] || {max: 0, override: null};
+      const label = CONFIG.OrinsGate.powerLevels[i];
+      const l = actorData.powers["power"+i] || {max: 0, override: null};
       let max = parseInt(l.override || l.max || 0);
       let slots = Math.clamped(parseInt(l.value || 0), 0, max);
       if ( max > 0 ) lmax = i;
       arr.push({
         level: i,
-        label: i > 0 ? game.i18n.format('DND5E.SpellLevelSlot', {level: label, n: slots}) : label,
+        label: i > 0 ? game.i18n.format('OrinsGate.PowerLevelSlot', {level: label, n: slots}) : label,
         canCast: canUpcast && (max > 0),
         hasSlots: slots > 0
       });
       return arr;
     }, []).filter(sl => sl.level <= lmax);
 
-    // If this character has pact slots, present them as an option for casting the spell.
-    const pact = actorData.spells.pact;
+    // If this character has pact slots, present them as an option for casting the power.
+    const pact = actorData.powers.pact;
     if (pact.level >= lvl) {
-      spellLevels.push({
+      powerLevels.push({
         level: 'pact',
-        label: `${game.i18n.format('DND5E.SpellLevelPact', {level: pact.level, n: pact.value})}`,
+        label: `${game.i18n.format('OrinsGate.PowerLevelPact', {level: pact.level, n: pact.value})}`,
         canCast: canUpcast,
         hasSlots: pact.value > 0
       });
     }
-    const canCast = spellLevels.some(l => l.hasSlots);
+    const canCast = powerLevels.some(l => l.hasSlots);
 
     // Return merged data
-    data = mergeObject(data, { hasSpellSlots: true, canUpcast, spellLevels });
-    if ( !canCast ) data.errors.push("DND5E.SpellCastNoSlots");
+    data = mergeObject(data, { hasPowerSlots: true, canUpcast, powerLevels });
+    if ( !canCast ) data.errors.push("OrinsGate.PowerCastNoSlots");
   }
 
   /* -------------------------------------------- */
@@ -130,11 +130,11 @@ export default class AbilityUseDialog extends Dialog {
 
     // Zero quantity
     const quantity = item.data.quantity;
-    if ( quantity <= 0 ) return game.i18n.localize("DND5E.AbilityUseUnavailableHint");
+    if ( quantity <= 0 ) return game.i18n.localize("OrinsGate.AbilityUseUnavailableHint");
 
     // Abilities which use Recharge
     if ( !!recharge.value ) {
-      return game.i18n.format(recharge.charged ? "DND5E.AbilityUseChargedHint" : "DND5E.AbilityUseRechargeHint", {
+      return game.i18n.format(recharge.charged ? "OrinsGate.AbilityUseChargedHint" : "OrinsGate.AbilityUseRechargeHint", {
         type: item.type,
       })
     }
@@ -144,10 +144,10 @@ export default class AbilityUseDialog extends Dialog {
 
     // Consumables
     if ( item.type === "consumable" ) {
-      let str = "DND5E.AbilityUseNormalHint";
-      if ( uses.value > 1 ) str = "DND5E.AbilityUseConsumableChargeHint";
-      else if ( item.data.quantity === 1 && uses.autoDestroy ) str = "DND5E.AbilityUseConsumableDestroyHint";
-      else if ( item.data.quantity > 1 ) str = "DND5E.AbilityUseConsumableQuantityHint";
+      let str = "OrinsGate.AbilityUseNormalHint";
+      if ( uses.value > 1 ) str = "OrinsGate.AbilityUseConsumableChargeHint";
+      else if ( item.data.quantity === 1 && uses.autoDestroy ) str = "OrinsGate.AbilityUseConsumableDestroyHint";
+      else if ( item.data.quantity > 1 ) str = "OrinsGate.AbilityUseConsumableQuantityHint";
       return game.i18n.format(str, {
         type: item.data.consumableType,
         value: uses.value,
@@ -157,11 +157,11 @@ export default class AbilityUseDialog extends Dialog {
 
     // Other Items
     else {
-      return game.i18n.format("DND5E.AbilityUseNormalHint", {
+      return game.i18n.format("OrinsGate.AbilityUseNormalHint", {
         type: item.type,
         value: uses.value,
         max: uses.max,
-        per: CONFIG.DND5E.limitedUsePeriods[uses.per]
+        per: CONFIG.OrinsGate.limitedUsePeriods[uses.per]
       });
     }
   }

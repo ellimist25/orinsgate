@@ -955,7 +955,7 @@
   margin: 0 5px;
   flex: 0 0 150px;
 }
-.orinsgate.sheet.actor .powercasting-ability h3.spell-dc {
+.orinsgate.sheet.actor .powercasting-ability h3.power-dc {
   flex: 1;
   text-align: right;
 }

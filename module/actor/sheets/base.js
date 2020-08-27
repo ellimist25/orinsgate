@@ -1,7 +1,7 @@
 import Item5e from "../../item/entity.js";
 import TraitSelector from "../../apps/trait-selector.js";
 import ActorSheetFlags from "../../apps/actor-flags.js";
-import {DND5E} from '../../config.js';
+import {OrinsGate} from '../../config.js';
 
 /**
  * Extend the basic ActorSheet class to suppose system-specific logic and functionality.
@@ -18,7 +18,7 @@ export default class ActorSheet5e extends ActorSheet {
      */
     this._filters = {
       inventory: new Set(),
-      spellbook: new Set(),
+      powerbook: new Set(),
       features: new Set()
     };
   }
@@ -31,7 +31,7 @@ export default class ActorSheet5e extends ActorSheet {
       scrollY: [
         ".inventory .inventory-list",
         ".features .inventory-list",
-        ".spellbook .inventory-list"
+        ".powerbook .inventory-list"
       ],
       tabs: [{navSelector: ".tabs", contentSelector: ".sheet-body", initial: "description"}]
     });
@@ -41,8 +41,8 @@ export default class ActorSheet5e extends ActorSheet {
 
   /** @override */
   get template() {
-    if ( !game.user.isGM && this.actor.limited ) return "systems/dnd5e/templates/actors/limited-sheet.html";
-    return `systems/dnd5e/templates/actors/${this.actor.data.type}-sheet.html`;
+    if ( !game.user.isGM && this.actor.limited ) return "systems/orinsgate/templates/actors/limited-sheet.html";
+    return `systems/orinsgate/templates/actors/${this.actor.data.type}-sheet.html`;
   }
 
   /* -------------------------------------------- */
@@ -61,7 +61,7 @@ export default class ActorSheet5e extends ActorSheet {
       isCharacter: this.entity.data.type === "character",
       isNPC: this.entity.data.type === "npc",
       isVehicle: this.entity.data.type === 'vehicle',
-      config: CONFIG.DND5E,
+      config: CONFIG.OrinsGate,
     };
 
     // The Actor and its Items
@@ -78,17 +78,17 @@ export default class ActorSheet5e extends ActorSheet {
     // Ability Scores
     for ( let [a, abl] of Object.entries(data.actor.data.abilities)) {
       abl.icon = this._getProficiencyIcon(abl.proficient);
-      abl.hover = CONFIG.DND5E.proficiencyLevels[abl.proficient];
-      abl.label = CONFIG.DND5E.abilities[a];
+      abl.hover = CONFIG.OrinsGate.proficiencyLevels[abl.proficient];
+      abl.label = CONFIG.OrinsGate.abilities[a];
     }
 
     // Skills
     if (data.actor.data.skills) {
       for ( let [s, skl] of Object.entries(data.actor.data.skills)) {
-        skl.ability = CONFIG.DND5E.abilityAbbreviations[skl.ability];
+        skl.ability = CONFIG.OrinsGate.abilityAbbreviations[skl.ability];
         skl.icon = this._getProficiencyIcon(skl.value);
-        skl.hover = CONFIG.DND5E.proficiencyLevels[skl.value];
-        skl.label = CONFIG.DND5E.skills[s];
+        skl.hover = CONFIG.OrinsGate.proficiencyLevels[skl.value];
+        skl.label = CONFIG.OrinsGate.skills[s];
       }
     }
 
@@ -106,14 +106,14 @@ export default class ActorSheet5e extends ActorSheet {
 
   _prepareTraits(traits) {
     const map = {
-      "dr": CONFIG.DND5E.damageResistanceTypes,
-      "di": CONFIG.DND5E.damageResistanceTypes,
-      "dv": CONFIG.DND5E.damageResistanceTypes,
-      "ci": CONFIG.DND5E.conditionTypes,
-      "languages": CONFIG.DND5E.languages,
-      "armorProf": CONFIG.DND5E.armorProficiencies,
-      "weaponProf": CONFIG.DND5E.weaponProficiencies,
-      "toolProf": CONFIG.DND5E.toolProficiencies
+      "dr": CONFIG.OrinsGate.damageResistanceTypes,
+      "di": CONFIG.OrinsGate.damageResistanceTypes,
+      "dv": CONFIG.OrinsGate.damageResistanceTypes,
+      "ci": CONFIG.OrinsGate.conditionTypes,
+      "languages": CONFIG.OrinsGate.languages,
+      "armorProf": CONFIG.OrinsGate.armorProficiencies,
+      "weaponProf": CONFIG.OrinsGate.weaponProficiencies,
+      "toolProf": CONFIG.OrinsGate.toolProficiencies
     };
     for ( let [t, choices] of Object.entries(map) ) {
       const trait = traits[t];
@@ -138,15 +138,15 @@ export default class ActorSheet5e extends ActorSheet {
   /* -------------------------------------------- */
 
   /**
-   * Insert a spell into the spellbook object when rendering the character sheet
+   * Insert a power into the powerbook object when rendering the character sheet
    * @param {Object} data     The Actor data being prepared
-   * @param {Array} spells    The spell data being prepared
+   * @param {Array} powers    The power data being prepared
    * @private
    */
-  _prepareSpellbook(data, spells) {
+  _preparePowerbook(data, powers) {
     const owner = this.actor.owner;
-    const levels = data.data.spells;
-    const spellbook = {};
+    const levels = data.data.powers;
+    const powerbook = {};
 
     // Define some mappings
     const sections = {
@@ -155,76 +155,76 @@ export default class ActorSheet5e extends ActorSheet {
       "pact": 0.5
     };
 
-    // Label spell slot uses headers
+    // Label power slot uses headers
     const useLabels = {
       "-20": "-",
       "-10": "-",
       "0": "&infin;"
     };
 
-    // Format a spellbook entry for a certain indexed level
+    // Format a powerbook entry for a certain indexed level
     const registerSection = (sl, i, label, level={}) => {
-      spellbook[i] = {
+      powerbook[i] = {
         order: i,
         label: label,
         usesSlots: i > 0,
         canCreate: owner && (i >= 1),
         canPrepare: (data.actor.type === "character") && (i >= 1),
-        spells: [],
+        powers: [],
         uses: useLabels[i] || level.value || 0,
         slots: useLabels[i] || level.max || 0,
         override: level.override || 0,
-        dataset: {"type": "spell", "level": i},
+        dataset: {"type": "power", "level": i},
         prop: sl
       };
     };
 
-    // Determine the maximum spell level which has a slot
+    // Determine the maximum power level which has a slot
     const maxLevel = Array.fromRange(10).reduce((max, i) => {
       if ( i === 0 ) return max;
-      const level = levels[`spell${i}`];
+      const level = levels[`power${i}`];
       if ( (level.max || level.override ) && ( i > max ) ) max = i;
       return max;
     }, 0);
 
-    // Structure the spellbook for every level up to the maximum which has a slot
+    // Structure the powerbook for every level up to the maximum which has a slot
     if ( maxLevel > 0 ) {
-      registerSection("spell0", 0, CONFIG.DND5E.spellLevels[0]);
+      registerSection("power0", 0, CONFIG.OrinsGate.powerLevels[0]);
       for (let lvl = 1; lvl <= maxLevel; lvl++) {
-        const sl = `spell${lvl}`;
-        registerSection(sl, lvl, CONFIG.DND5E.spellLevels[lvl], levels[sl]);
+        const sl = `power${lvl}`;
+        registerSection(sl, lvl, CONFIG.OrinsGate.powerLevels[lvl], levels[sl]);
       }
     }
     if ( levels.pact && levels.pact.max ) {
-      registerSection("spell0", 0, CONFIG.DND5E.spellLevels[0]);
-      registerSection("pact", sections.pact, CONFIG.DND5E.spellPreparationModes.pact, levels.pact);
+      registerSection("power0", 0, CONFIG.OrinsGate.powerLevels[0]);
+      registerSection("pact", sections.pact, CONFIG.OrinsGate.powerPreparationModes.pact, levels.pact);
     }
 
-    // Iterate over every spell item, adding spells to the spellbook by section
-    spells.forEach(spell => {
-      const mode = spell.data.preparation.mode || "prepared";
-      let s = spell.data.level || 0;
-      const sl = `spell${s}`;
+    // Iterate over every power item, adding powers to the powerbook by section
+    powers.forEach(power => {
+      const mode = power.data.preparation.mode || "prepared";
+      let s = power.data.level || 0;
+      const sl = `power${s}`;
 
-      // Spellcasting mode specific headings
+      // Powercasting mode specific headings
       if ( mode in sections ) {
         s = sections[mode];
-        if ( !spellbook[s] ){
-          registerSection(mode, s, CONFIG.DND5E.spellPreparationModes[mode], levels[mode]);
+        if ( !powerbook[s] ){
+          registerSection(mode, s, CONFIG.OrinsGate.powerPreparationModes[mode], levels[mode]);
         }
       }
 
-      // Higher-level spell headings
-      else if ( !spellbook[s] ) {
-        registerSection(sl, s, CONFIG.DND5E.spellLevels[s], levels[sl]);
+      // Higher-level power headings
+      else if ( !powerbook[s] ) {
+        registerSection(sl, s, CONFIG.OrinsGate.powerLevels[s], levels[sl]);
       }
 
-      // Add the spell to the relevant heading
-      spellbook[s].spells.push(spell);
+      // Add the power to the relevant heading
+      powerbook[s].powers.push(power);
     });
 
-    // Sort the spellbook by section level
-    const sorted = Object.values(spellbook);
+    // Sort the powerbook by section level
+    const sorted = Object.values(powerbook);
     sorted.sort((a, b) => a.order - b.order);
     return sorted;
   }
@@ -247,7 +247,7 @@ export default class ActorSheet5e extends ActorSheet {
         }
       }
 
-      // Spell-specific filters
+      // Power-specific filters
       if ( filters.has("ritual") ) {
         if (data.components.ritual !== true) return false;
       }
@@ -327,7 +327,7 @@ export default class ActorSheet5e extends ActorSheet {
       html.find('.item-edit').click(this._onItemEdit.bind(this));
       html.find('.item-delete').click(this._onItemDelete.bind(this));
       html.find('.item-uses input').click(ev => ev.target.select()).change(this._onUsesChange.bind(this));
-      html.find('.slot-max-override').click(this._onSpellSlotOverride.bind(this));
+      html.find('.slot-max-override').click(this._onPowerSlotOverride.bind(this));
     }
 
     // Owner Only Listeners
@@ -429,7 +429,7 @@ export default class ActorSheet5e extends ActorSheet {
 
   /** @override */
   async _onDropActor(event, data) {
-    const canPolymorph = game.user.isGM || (this.actor.owner && game.settings.get('dnd5e', 'allowPolymorphing'));
+    const canPolymorph = game.user.isGM || (this.actor.owner && game.settings.get('orinsgate', 'allowPolymorphing'));
     if ( !canPolymorph ) return false;
 
     // Get the target actor
@@ -448,29 +448,29 @@ export default class ActorSheet5e extends ActorSheet {
       html.find('input').each((i, el) => {
         options[el.name] = el.checked;
       });
-      const settings = mergeObject(game.settings.get('dnd5e', 'polymorphSettings') || {}, options);
-      game.settings.set('dnd5e', 'polymorphSettings', settings);
+      const settings = mergeObject(game.settings.get('orinsgate', 'polymorphSettings') || {}, options);
+      game.settings.set('orinsgate', 'polymorphSettings', settings);
       return settings;
     };
 
     // Create and render the Dialog
     return new Dialog({
-      title: game.i18n.localize('DND5E.PolymorphPromptTitle'),
+      title: game.i18n.localize('OrinsGate.PolymorphPromptTitle'),
       content: {
-        options: game.settings.get('dnd5e', 'polymorphSettings'),
-        i18n: DND5E.polymorphSettings,
+        options: game.settings.get('orinsgate', 'polymorphSettings'),
+        i18n: OrinsGate.polymorphSettings,
         isToken: this.actor.isToken
       },
       default: 'accept',
       buttons: {
         accept: {
           icon: '<i class="fas fa-check"></i>',
-          label: game.i18n.localize('DND5E.PolymorphAcceptSettings'),
+          label: game.i18n.localize('OrinsGate.PolymorphAcceptSettings'),
           callback: html => this.actor.transformInto(sourceActor, rememberOptions(html))
         },
         wildshape: {
           icon: '<i class="fas fa-paw"></i>',
-          label: game.i18n.localize('DND5E.PolymorphWildShape'),
+          label: game.i18n.localize('OrinsGate.PolymorphWildShape'),
           callback: html => this.actor.transformInto(sourceActor, {
             keepMental: true,
             mergeSaves: true,
@@ -480,7 +480,7 @@ export default class ActorSheet5e extends ActorSheet {
         },
         polymorph: {
           icon: '<i class="fas fa-pastafarianism"></i>',
-          label: game.i18n.localize('DND5E.Polymorph'),
+          label: game.i18n.localize('OrinsGate.Polymorph'),
           callback: html => this.actor.transformInto(sourceActor, {
             transformTokens: rememberOptions(html).transformTokens
           })
@@ -491,9 +491,9 @@ export default class ActorSheet5e extends ActorSheet {
         }
       }
     }, {
-      classes: ['dialog', 'dnd5e'],
+      classes: ['dialog', 'orinsgate'],
       width: 600,
-      template: 'systems/dnd5e/templates/apps/polymorph-prompt.html'
+      template: 'systems/orinsgate/templates/apps/polymorph-prompt.html'
     }).render(true);
   }
 
@@ -502,9 +502,9 @@ export default class ActorSheet5e extends ActorSheet {
   /** @override */
   async _onDropItemCreate(itemData) {
 
-    // Create a Consumable spell scroll on the Inventory tab
-    if ( (itemData.type === "spell") && (this._tabs[0].active === "inventory") ) {
-      const scroll = await Item5e.createScrollFromSpell(itemData);
+    // Create a Consumable power scroll on the Inventory tab
+    if ( (itemData.type === "power") && (this._tabs[0].active === "inventory") ) {
+      const scroll = await Item5e.createScrollFromPower(itemData);
       itemData = scroll.data;
     }
 
@@ -524,17 +524,17 @@ export default class ActorSheet5e extends ActorSheet {
   /* -------------------------------------------- */
 
   /**
-   * Handle enabling editing for a spell slot override value
+   * Handle enabling editing for a power slot override value
    * @param {MouseEvent} event    The originating click event
    * @private
    */
-  async _onSpellSlotOverride (event) {
+  async _onPowerSlotOverride (event) {
     const span = event.currentTarget.parentElement;
     const level = span.dataset.level;
-    const override = this.actor.data.data.spells[level].override || span.dataset.slots;
+    const override = this.actor.data.data.powers[level].override || span.dataset.slots;
     const input = document.createElement("INPUT");
     input.type = "text";
-    input.name = `data.spells.${level}.override`;
+    input.name = `data.powers.${level}.override`;
     input.value = override;
     input.placeholder = span.dataset.slots;
     input.dataset.dtype = "Number";
@@ -572,9 +572,9 @@ export default class ActorSheet5e extends ActorSheet {
     const itemId = event.currentTarget.closest(".item").dataset.itemId;
     const item = this.actor.getOwnedItem(itemId);
 
-    // Roll spells through the actor
-    if ( item.data.type === "spell" ) {
-      return this.actor.useSpell(item, {configureDialog: !event.shiftKey});
+    // Roll powers through the actor
+    if ( item.data.type === "power" ) {
+      return this.actor.usePower(item, {configureDialog: !event.shiftKey});
     }
 
     // Otherwise roll the Item directly
@@ -634,7 +634,7 @@ export default class ActorSheet5e extends ActorSheet {
     const header = event.currentTarget;
     const type = header.dataset.type;
     const itemData = {
-      name: game.i18n.format("DND5E.ItemNew", {type: type.capitalize()}),
+      name: game.i18n.format("OrinsGate.ItemNew", {type: type.capitalize()}),
       type: type,
       data: duplicate(header.dataset)
     };
@@ -736,7 +736,7 @@ export default class ActorSheet5e extends ActorSheet {
     event.preventDefault();
     const a = event.currentTarget;
     const label = a.parentElement.querySelector("label");
-    const choices = CONFIG.DND5E[a.dataset.options];
+    const choices = CONFIG.OrinsGate[a.dataset.options];
     const options = { name: a.dataset.target, title: label.innerText, choices };
     new TraitSelector(this.actor, options).render(true)
   }
@@ -750,7 +750,7 @@ export default class ActorSheet5e extends ActorSheet {
     // Add button to revert polymorph
     if ( !this.actor.isPolymorphed || this.actor.isToken ) return buttons;
     buttons.unshift({
-      label: 'DND5E.PolymorphRestoreTransformation',
+      label: 'OrinsGate.PolymorphRestoreTransformation',
       class: "restore-transformation",
       icon: "fas fa-backward",
       onclick: ev => this.actor.revertOriginalForm()

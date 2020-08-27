@@ -2,7 +2,7 @@
 
 @actorNameHeight: 60px;
 
-.dnd5e.sheet.actor {
+.orinsgate.sheet.actor {
 
   /* ----------------------------------------- */
   /*  Sheet Header                             */
@@ -382,7 +382,7 @@
 
   .tab.features,
   .tab.inventory,
-  .tab.spellbook {
+  .tab.powerbook {
     overflow-y: hidden;
   }
 
@@ -616,10 +616,10 @@
   }
 
   /* ----------------------------------------- */
-  /*  Spellbook                                */
+  /*  Powerbook                                */
   /* ----------------------------------------- */
 
-  .spellcasting-ability {
+  .powercasting-ability {
     flex: 0 0 240px;
     margin: 0;
 
@@ -631,14 +631,14 @@
       margin: 0 5px;
       flex: 0 0 150px;
     }
-    h3.spell-dc {
+    h3.power-dc {
       flex: 1;
       text-align: right;
     }
   }
 
-  .spell-slots,
-  .spell-comps {
+  .power-slots,
+  .power-comps {
     flex: 0 0 75px;
     padding-right: 5px;
     text-align: right;
@@ -647,7 +647,7 @@
     border-right: 1px solid @colorFaint;
   }
 
-  .spell-slots {
+  .power-slots {
     input {
       display: inline;
       max-width: 20px;
@@ -658,12 +658,12 @@
     }
   }
 
-  .spell-uses {
+  .power-uses {
     padding-right: 8px;
     text-align: right !important;
   }
 
-  .spell-school, .spell-action, .spell-target {
+  .power-school, .power-action, .power-target {
     flex: 0 0 100px;
     font-size: 12px;
     color: @colorTan;
@@ -671,7 +671,7 @@
     border-right: 1px solid @colorFaint;
   }
 
-  .spell-component {
+  .power-component {
     line-height: 14px;
     &.C, &.R {
       display: inline-block;
@@ -685,8 +685,8 @@
     }
   }
 
-  // Empty spellbook controls
-  .spellbook-empty .item-controls { flex: 1; }
+  // Empty powerbook controls
+  .powerbook-empty .item-controls { flex: 1; }
 
   /* ----------------------------------------- */
   /*  TinyMCE                                  */

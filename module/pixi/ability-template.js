@@ -1,7 +1,7 @@
-import { DND5E } from "../config.js";
+import { OrinsGate } from "../config.js";
 
 /**
- * A helper class for building MeasuredTemplates for 5e spells and abilities
+ * A helper class for building MeasuredTemplates for 5e powers and abilities
  * @extends {MeasuredTemplate}
  */
 export default class AbilityTemplate extends MeasuredTemplate {
@@ -13,7 +13,7 @@ export default class AbilityTemplate extends MeasuredTemplate {
    */
   static fromItem(item) {
     const target = getProperty(item.data, "data.target") || {};
-    const templateShape = DND5E.areaTargetTypes[target.type];
+    const templateShape = OrinsGate.areaTargetTypes[target.type];
     if ( !templateShape ) return null;
 
     // Prepare template data
@@ -51,7 +51,7 @@ export default class AbilityTemplate extends MeasuredTemplate {
   /* -------------------------------------------- */
 
   /**
-   * Creates a preview of the spell template
+   * Creates a preview of the power template
    * @param {Event} event   The initiating click event
    */
   drawPreview(event) {
