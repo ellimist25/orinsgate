@@ -80,7 +80,7 @@
       },
       "creature": {
         "attributes": {
-          "spellcasting": "int",
+          "powercasting": "int",
           "speed": {
             "value": "30 ft",
             "special": ""
@@ -171,48 +171,48 @@
             "custom": ""
           }
         },
-        "spells": {
-          "spell1": {
+        "powers": {
+          "power1": {
             "value": 0,
             "max": 0,
             "override": null
           },
-          "spell2": {
+          "power2": {
             "value": 0,
             "max": 0,
             "override": null
           },
-          "spell3": {
+          "power3": {
             "value": 0,
             "max": 0,
             "override": null
           },
-          "spell4": {
+          "power4": {
             "value": 0,
             "max": 0,
             "override": null
           },
-          "spell5": {
+          "power5": {
             "value": 0,
             "max": 0,
             "override": null
           },
-          "spell6": {
+          "power6": {
             "value": 0,
             "max": 0,
             "override": null
           },
-          "spell7": {
+          "power7": {
             "value": 0,
             "max": 0,
             "override": null
           },
-          "spell8": {
+          "power8": {
             "value": 0,
             "max": 0,
             "override": null
           },
-          "spell9": {
+          "power9": {
             "value": 0,
             "max": 0,
             "override": null
@@ -245,7 +245,7 @@
             "save": "",
             "skill": ""
           },
-          "spell":  {
+          "power":  {
             "dc": ""
           }
         }
@@ -318,7 +318,7 @@
         "type": "",
         "environment": "",
         "cr": 1,
-        "spellLevel": 0,
+        "powerLevel": 0,
         "xp": {
           "value": 10
         },
@@ -396,7 +396,7 @@
     }
   },
   "Item": {
-    "types": ["weapon", "equipment", "consumable", "tool", "loot", "class", "spell", "feat", "backpack"],
+    "types": ["weapon", "equipment", "consumable", "tool", "loot", "class", "power", "feat", "backpack"],
     "templates": {
       "itemDescription": {
         "description": {
@@ -460,7 +460,7 @@
         "save": {
           "ability": "",
           "dc": null,
-          "scaling": "spell"
+          "scaling": "power"
         }
       },
       "mountable": {
@@ -501,7 +501,7 @@
         "choices": [],
         "value": []
       },
-      "spellcasting": "none"
+      "powercasting": "none"
     },
     "consumable": {
       "templates": ["itemDescription", "physicalItem", "activatedEffect", "action"],
@@ -542,7 +542,7 @@
       "chatFlavor": "",
       "proficient": 0
     },
-    "spell": {
+    "power": {
       "templates": ["itemDescription", "activatedEffect", "action"],
       "level": 1,
       "school": "",
