@@ -397,7 +397,6 @@ OrinsGate.senses = {
 OrinsGate.skills = {
   "acr": "OrinsGate.SkillAcr",
   "ani": "OrinsGate.SkillAni",
-  "arc": "OrinsGate.SkillArc",
   "ath": "OrinsGate.SkillAth",
   "dec": "OrinsGate.SkillDec",
   "his": "OrinsGate.SkillHis",
@@ -409,10 +408,13 @@ OrinsGate.skills = {
   "prc": "OrinsGate.SkillPrc",
   "prf": "OrinsGate.SkillPrf",
   "per": "OrinsGate.SkillPer",
-  "rel": "OrinsGate.SkillRel",
   "slt": "OrinsGate.SkillSlt",
   "ste": "OrinsGate.SkillSte",
-  "sur": "OrinsGate.SkillSur"
+  "sur": "OrinsGate.SkillSur",
+  "dme": "OrinsGate.SkillDme",
+  "tec": "OrinsGate.SkillTec",
+  "pil": "OrinsGate.SkillPil",
+  "cul": "OrinsGate.SkillCul"
 };
 
 

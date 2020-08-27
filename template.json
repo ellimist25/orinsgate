@@ -99,17 +99,21 @@
             "value": 0,
             "ability": "wis"
           },
-          "arc": {
-            "value": 0,
-            "ability": "int"
-          },
           "ath": {
             "value": 0,
             "ability": "str"
           },
+          "cul": {
+            "value": 0,
+            "ability": "int"
+          },
           "dec": {
             "value": 0,
             "ability": "cha"
+          },
+          "dme": {
+            "value": 0,
+            "ability": "int"
           },
           "his": {
             "value": 0,
@@ -135,6 +139,10 @@
             "value": 0,
             "ability": "int"
           },
+          "pil": {
+            "value": 0,
+            "ability": "dex"
+          },
           "prc": {
             "value": 0,
             "ability": "wis"
@@ -147,10 +155,6 @@
             "value": 0,
             "ability": "cha"
           },
-          "rel": {
-            "value": 0,
-            "ability": "int"
-          },
           "slt": {
             "value": 0,
             "ability": "dex"
@@ -162,6 +166,10 @@
           "sur": {
             "value": 0,
             "ability": "wis"
+          },
+          "tec": {
+            "value": 0,
+            "ability": "int"
           }
         },
         "traits": {

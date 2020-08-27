@@ -2,7 +2,7 @@
   "name": "orinsgate",
   "title": "Orin's Gate",
   "description": "A homebrew system based closely on D&D 5th Edition.",
-  "version": 0.01,
+  "version": 0.96,
   "author": "Ellimist",
   "scripts": [],
   "esmodules": ["orinsgate.js"],
