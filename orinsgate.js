@@ -4,12 +4,12 @@
  * Author: Atropos
  * Software License: GNU GPLv3
  * Content License: https://media.wizards.com/2016/downloads/DND/SRD-OGL_V5.1.pdf
- * Repository: https://gitlab.com/foundrynet/og
- * Issue Tracker: https://gitlab.com/foundrynet/og/issues
+ * Repository: https://gitlab.com/foundrynet/orinsgate
+ * Issue Tracker: https://gitlab.com/foundrynet/orinsgate/issues
  */
 
 // Import Modules
-import { OG } from "./module/config.js";
+import { OrinsGate } from "./module/config.js";
 import { registerSystemSettings } from "./module/settings.js";
 import { preloadHandlebarsTemplates } from "./module/templates.js";
 import { _getInitiativeFormula } from "./module/combat.js";
@@ -41,10 +41,10 @@ import * as migrations from "./module/migration.js";
 /* -------------------------------------------- */
 
 Hooks.once("init", function() {
-  console.log(`DnD5e | Initializing the DnD5e Game System\n${OG.ASCII}`);
+  console.log(`DnD5e | Initializing the DnD5e Game System\n${OrinsGate.ASCII}`);
 
   // Create a namespace within the game global
-  game.og = {
+  game.orinsgate = {
     applications: {
       AbilityUseDialog,
       ActorSheetFlags,
@@ -58,7 +58,7 @@ Hooks.once("init", function() {
     canvas: {
       AbilityTemplate
     },
-    config: OG,
+    config: OrinsGate,
     dice: dice,
     entities: {
       Actor5e,
@@ -70,7 +70,7 @@ Hooks.once("init", function() {
   };
 
   // Record Configuration Values
-  CONFIG.OG = DND5E;
+  CONFIG.OrinsGate = DND5E;
   CONFIG.Actor.entityClass = Actor5e;
   CONFIG.Item.entityClass = Item5e;
 
@@ -84,11 +84,11 @@ Hooks.once("init", function() {
 
   // Register sheet application classes
   Actors.unregisterSheet("core", ActorSheet);
-  Actors.registerSheet("og", ActorSheet5eCharacter, { types: ["character"], makeDefault: true });
-  Actors.registerSheet("og", ActorSheet5eNPC, { types: ["npc"], makeDefault: true });
-  Actors.registerSheet('og', ActorSheet5eVehicle, {types: ['vehicle'], makeDefault: true});
+  Actors.registerSheet("orinsgate", ActorSheet5eCharacter, { types: ["character"], makeDefault: true });
+  Actors.registerSheet("orinsgate", ActorSheet5eNPC, { types: ["npc"], makeDefault: true });
+  Actors.registerSheet('orinsgate', ActorSheet5eVehicle, {types: ['vehicle'], makeDefault: true});
   Items.unregisterSheet("core", ItemSheet);
-  Items.registerSheet("og", ItemSheet5e, {makeDefault: true});
+  Items.registerSheet("orinsgate", ItemSheet5e, {makeDefault: true});
 
   // Preload Handlebars Templates
   preloadHandlebarsTemplates();
@@ -122,11 +122,11 @@ Hooks.once("setup", function() {
 
   // Localize and sort CONFIG objects
   for ( let o of toLocalize ) {
-    const localized = Object.entries(CONFIG.OG[o]).map(e => {
+    const localized = Object.entries(CONFIG.OrinsGate[o]).map(e => {
       return [e[0], game.i18n.localize(e[1])];
     });
     if ( !noSort.includes(o) ) localized.sort((a, b) => a[1].localeCompare(b[1]));
-    CONFIG.OG[o] = localized.reduce((obj, e) => {
+    CONFIG.OrinsGate[o] = localized.reduce((obj, e) => {
       obj[e[0]] = e[1];
       return obj;
     }, {});
@@ -141,7 +141,7 @@ Hooks.once("setup", function() {
 Hooks.once("ready", function() {
 
   // Determine whether a system migration is required and feasible
-  const currentVersion = game.settings.get("og", "systemMigrationVersion");
+  const currentVersion = game.settings.get("orinsgate", "systemMigrationVersion");
   const NEEDS_MIGRATION_VERSION = 0.84;
   const COMPATIBLE_MIGRATION_VERSION = 0.80;
   let needMigration = (currentVersion < NEEDS_MIGRATION_VERSION) || (currentVersion === null);
@@ -165,7 +165,7 @@ Hooks.once("ready", function() {
 Hooks.on("canvasInit", function() {
 
   // Extend Diagonal Measurement
-  canvas.grid.diagonalRule = game.settings.get("og", "diagonalMovement");
+  canvas.grid.diagonalRule = game.settings.get("orinsgate", "diagonalMovement");
   SquareGrid.prototype.measureDistances = measureDistances;
 
   // Extend Token Resource Bars
@@ -186,7 +186,7 @@ Hooks.on("renderChatMessage", (app, html, data) => {
   chat.highlightCriticalSuccessFailure(app, html, data);
 
   // Optionally collapse the content
-  if (game.settings.get("og", "autoCollapseItemCards")) html.find(".card-content").hide();
+  if (game.settings.get("orinsgate", "autoCollapseItemCards")) html.find(".card-content").hide();
 });
 Hooks.on("getChatLogEntryContext", chat.addChatMessageContextOptions);
 Hooks.on("renderChatLog", (app, html, data) => Item5e.chatListeners(html));

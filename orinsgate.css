@@ -69,50 +69,50 @@
 /* ----------------------------------------- */
 /*  All DnD5e Apps                           */
 /* ----------------------------------------- */
-.og {
+.orinsgate {
   /* ----------------------------------------- */
   /*  Element Styles                           */
   /* ----------------------------------------- */
   /* Form Groups */
   /* Tags */
 }
-.og .window-content {
+.orinsgate .window-content {
   background: url("ui/parchment.jpg") repeat;
   font-size: 13px;
   color: #191813;
 }
-.og input[type="text"],
-.og select {
+.orinsgate input[type="text"],
+.orinsgate select {
   height: calc(100% - 2px);
   border: 1px solid #7a7971;
   background: rgba(0, 0, 0, 0.05);
   color: #191813;
 }
-.og input[type="text"]:hover,
-.og input[type="text"]:focus {
+.orinsgate input[type="text"]:hover,
+.orinsgate input[type="text"]:focus {
   border: 1px solid #111;
   box-shadow: 0 0 8px red;
 }
-.og input:disabled,
-.og select:disabled,
-.og textarea:disabled {
+.orinsgate input:disabled,
+.orinsgate select:disabled,
+.orinsgate textarea:disabled {
   color: #4b4a44;
 }
-.og input:disabled:hover,
-.og select:disabled:hover,
-.og textarea:disabled:hover,
-.og input:disabled:focus,
-.og select:disabled:focus,
-.og textarea:disabled:focus {
+.orinsgate input:disabled:hover,
+.orinsgate select:disabled:hover,
+.orinsgate textarea:disabled:hover,
+.orinsgate input:disabled:focus,
+.orinsgate select:disabled:focus,
+.orinsgate textarea:disabled:focus {
   box-shadow: none !important;
   border: 1px solid transparent !important;
   outline: none !important;
 }
-.og button {
+.orinsgate button {
   background: rgba(0, 0, 0, 0.1);
   border: 2px groove #eeede0;
 }
-.og label.checkbox {
+.orinsgate label.checkbox {
   flex: auto;
   padding: 0;
   margin: 0;
@@ -120,57 +120,57 @@
   line-height: 22px;
   font-size: 11px;
 }
-.og label.checkbox > input[type="checkbox"] {
+.orinsgate label.checkbox > input[type="checkbox"] {
   width: 16px;
   height: 16px;
   margin: 0 2px 0 0;
   position: relative;
   top: 4px;
 }
-.og label.checkbox.right > input[type="checkbox"] {
+.orinsgate label.checkbox.right > input[type="checkbox"] {
   margin: 0 0 0 2px;
 }
-.og .form-group label {
+.orinsgate .form-group label {
   flex: 2;
   color: #4b4a44;
   font-weight: bold;
 }
-.og .form-group .form-fields {
+.orinsgate .form-group .form-fields {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: flex-start;
 }
-.og .form-group .form-fields > * {
+.orinsgate .form-group .form-fields > * {
   flex: 1;
 }
-.og .form-group .form-fields .flex1 {
+.orinsgate .form-group .form-fields .flex1 {
   flex: 1;
 }
-.og .form-group .form-fields .flex2 {
+.orinsgate .form-group .form-fields .flex2 {
   flex: 2;
 }
-.og .form-group .form-fields .flex3 {
+.orinsgate .form-group .form-fields .flex3 {
   flex: 3;
 }
-.og .form-group .form-fields .flex4 {
+.orinsgate .form-group .form-fields .flex4 {
   flex: 4;
 }
-.og .form-group .form-fields > * {
+.orinsgate .form-group .form-fields > * {
   margin: 0 3px 0 0;
 }
-.og .form-group .form-fields > *:last-child {
+.orinsgate .form-group .form-fields > *:last-child {
   margin-right: 0;
 }
-.og .form-group.stacked label {
+.orinsgate .form-group.stacked label {
   flex: 0 0 100%;
   margin: 0;
 }
-.og .form-group.stacked label.checkbox {
+.orinsgate .form-group.stacked label.checkbox {
   flex: auto;
   text-align: left;
 }
-.og .form-header {
+.orinsgate .form-header {
   margin: 0 0 0.25em 0;
   padding: 2px 0;
   border-top: 2px groove #eeede0;
@@ -179,7 +179,7 @@
   font-size: 20px;
   font-weight: 700;
 }
-.og .tag {
+.orinsgate .tag {
   display: inline-block;
   margin: 0 2px 0 0;
   padding: 0 3px;
@@ -192,7 +192,7 @@
 /* ----------------------------------------- */
 /*  Entity Sheets Specifically               */
 /* ----------------------------------------- */
-.og.sheet {
+.orinsgate.sheet {
   /* ----------------------------------------- */
   /*  Element Styles                           */
   /* ----------------------------------------- */
@@ -215,42 +215,42 @@
   /*  Trait Lists                              */
   /* ----------------------------------------- */
 }
-.og.sheet .window-content {
+.orinsgate.sheet .window-content {
   overflow-y: hidden;
   padding: 5px;
   background: url("ui/parchment.jpg") repeat;
   font-size: 13px;
   color: #191813;
 }
-.og.sheet .window-content form {
+.orinsgate.sheet .window-content form {
   height: 100%;
   overflow: hidden;
 }
-.og.sheet .window-content .tab {
+.orinsgate.sheet .window-content .tab {
   height: 100%;
   overflow-y: auto;
   align-content: flex-start;
 }
-.og.sheet input[type="text"] {
+.orinsgate.sheet input[type="text"] {
   background: none;
   border: 1px solid transparent;
 }
-.og.sheet input[type="text"]:hover,
-.og.sheet input[type="text"]:focus {
+.orinsgate.sheet input[type="text"]:hover,
+.orinsgate.sheet input[type="text"]:focus {
   border: 1px solid #111;
 }
-.og.sheet select {
+.orinsgate.sheet select {
   flex: 1;
   font-size: 12px;
   height: 22px;
   background: transparent;
 }
-.og.sheet .editable .rollable:hover {
+.orinsgate.sheet .editable .rollable:hover {
   color: #000;
   text-shadow: 0 0 10px red;
   cursor: pointer;
 }
-.og.sheet span.sep {
+.orinsgate.sheet span.sep {
   flex: none;
   margin: 0 1px;
   display: inline;
@@ -258,39 +258,39 @@
   color: #7a7971;
   font-weight: normal;
 }
-.og.sheet .editor {
+.orinsgate.sheet .editor {
   height: 100%;
 }
-.og.sheet .editor .tox-toolbar-overlord,
-.og.sheet .editor .tox-toolbar__primary {
+.orinsgate.sheet .editor .tox-toolbar-overlord,
+.orinsgate.sheet .editor .tox-toolbar__primary {
   background: none;
 }
-.og.sheet .sheet-header {
+.orinsgate.sheet .sheet-header {
   flex: 0 0 100px;
   border-bottom: 2px groove #eeede0;
   /* Character Name */
   /* Profile Image */
   /* Header Summary Details */
 }
-.og.sheet .sheet-header .header-details {
+.orinsgate.sheet .sheet-header .header-details {
   font-family: "Modesto Condensed", "Palatino Linotype", serif;
   font-size: 20px;
   font-weight: 700;
 }
-.og.sheet .sheet-header h1 {
+.orinsgate.sheet .sheet-header h1 {
   flex: 1;
   border-bottom: none;
   height: 60px;
   margin: 0;
   padding: 5px;
 }
-.og.sheet .sheet-header h1 input {
+.orinsgate.sheet .sheet-header h1 input {
   display: block;
   height: 50px;
   font-size: 32px;
   margin: 0;
 }
-.og.sheet .sheet-header img.profile {
+.orinsgate.sheet .sheet-header img.profile {
   flex: 0 0 100px;
   max-width: 100px;
   height: 100px;
@@ -298,7 +298,7 @@
   border: none;
   border-right: 2px groove #eeede0;
 }
-.og.sheet .sheet-header .summary {
+.orinsgate.sheet .sheet-header .summary {
   flex: 0 0 100%;
   height: 40px;
   margin: 0;
@@ -307,7 +307,7 @@
   border-top: 2px groove #eeede0;
   border-bottom: none;
 }
-.og.sheet .sheet-header .summary li {
+.orinsgate.sheet .sheet-header .summary li {
   height: calc(100% - 6px);
   float: left;
   margin: 2px 0;
@@ -316,68 +316,68 @@
   line-height: 34px;
   color: #4b4a44;
 }
-.og.sheet .sheet-header .summary li:last-child {
+.orinsgate.sheet .sheet-header .summary li:last-child {
   border-right: none;
 }
-.og.sheet .sheet-navigation {
+.orinsgate.sheet .sheet-navigation {
   flex: 0 0 30px;
   margin-bottom: 5px;
   font-family: "Modesto Condensed", "Palatino Linotype", serif;
   font-size: 20px;
   font-weight: 700;
 }
-.og.sheet .sheet-navigation .item {
+.orinsgate.sheet .sheet-navigation .item {
   height: 30px;
   line-height: 32px;
   margin: 0 24px;
   border-bottom: 3px solid #b5b3a4;
 }
-.og.sheet .sheet-navigation .item.active {
+.orinsgate.sheet .sheet-navigation .item.active {
   border-bottom: 3px solid #44191A;
 }
-.og.sheet .sheet-body {
+.orinsgate.sheet .sheet-body {
   flex: 1;
   overflow: hidden;
 }
-.og.sheet .filter-list {
+.orinsgate.sheet .filter-list {
   list-style: none;
   margin: 0;
   padding: 0;
   line-height: 16px;
   max-width: 70%;
 }
-.og.sheet .filter-list .filter-icon {
+.orinsgate.sheet .filter-list .filter-icon {
   flex: none;
   font-size: 14px;
   color: #7a7971;
 }
-.og.sheet .filter-list .filter-item {
+.orinsgate.sheet .filter-list .filter-item {
   text-align: center;
   font-size: 12px;
   margin: 0 6px 0 0;
   border-bottom: 3px solid #b5b3a4;
   white-space: nowrap;
 }
-.og.sheet .filter-list .filter-item:last-child {
+.orinsgate.sheet .filter-list .filter-item:last-child {
   margin: 0;
 }
-.og.sheet .filter-list .filter-item:hover {
+.orinsgate.sheet .filter-list .filter-item:hover {
   text-shadow: 0 0 4px red;
   border-bottom: 3px solid #7a7971;
 }
-.og.sheet .filter-list .filter-item.active {
+.orinsgate.sheet .filter-list .filter-item.active {
   border-bottom: 3px solid #44191A;
 }
-.og.sheet .traits {
+.orinsgate.sheet .traits {
   margin: 5px 0 0;
 }
-.og.sheet .traits .trait-selector {
+.orinsgate.sheet .traits .trait-selector {
   flex: 0 0 16px;
   padding: 2px 0;
   color: #999;
   font-size: 10px;
 }
-.og.sheet .traits .traits-list {
+.orinsgate.sheet .traits .traits-list {
   flex: 0 0 100%;
   line-height: 20px;
   list-style: none;
@@ -396,7 +396,7 @@
   height: 24px;
   margin: 2px;
 }
-.og.sheet.actor {
+.orinsgate.sheet.actor {
   /* ----------------------------------------- */
   /*  Sheet Header                             */
   /* ----------------------------------------- */
@@ -430,60 +430,60 @@
   /*  TinyMCE                                  */
   /* ----------------------------------------- */
 }
-.og.sheet.actor .sheet-header img.profile {
+.orinsgate.sheet.actor .sheet-header img.profile {
   flex: 0 0 160px;
   max-width: 160px;
   height: 160px;
 }
-.og.sheet.actor .sheet-header h1.charname {
+.orinsgate.sheet.actor .sheet-header h1.charname {
   flex: 1;
   height: 60px;
   padding: 0;
 }
-.og.sheet.actor .sheet-header h1.charname input {
+.orinsgate.sheet.actor .sheet-header h1.charname input {
   height: 40px;
   margin: 10px 0;
 }
-.og.sheet.actor .sheet-header .header-exp {
+.orinsgate.sheet.actor .sheet-header .header-exp {
   flex: 0 0 150px;
   margin-right: 3px;
   height: 60px;
   justify-content: flex-end;
   text-align: right;
 }
-.og.sheet.actor .sheet-header .summary {
+.orinsgate.sheet.actor .sheet-header .summary {
   height: 30px;
   border-bottom: 2px groove #eeede0;
   font-size: 18px;
 }
-.og.sheet.actor .sheet-header .summary input,
-.og.sheet.actor .sheet-header .summary span {
+.orinsgate.sheet.actor .sheet-header .summary input,
+.orinsgate.sheet.actor .sheet-header .summary span {
   display: block;
   height: 24px;
   line-height: 24px;
 }
-.og.sheet.actor .sheet-header .attributes {
+.orinsgate.sheet.actor .sheet-header .attributes {
   flex: 0 0 100%;
   margin: 0;
 }
-.og.sheet.actor .sheet-header .attributes .attribute {
+.orinsgate.sheet.actor .sheet-header .attributes .attribute {
   height: 70px;
   margin: 0;
   border: none;
   border-right: 2px groove #eeede0;
   border-radius: 0;
 }
-.og.sheet.actor .sheet-header .attributes .attribute:last-child {
+.orinsgate.sheet.actor .sheet-header .attributes .attribute:last-child {
   border-right: none;
 }
-.og.sheet.actor .sheet-header .attributes .attribute .attribute-value {
+.orinsgate.sheet.actor .sheet-header .attributes .attribute .attribute-value {
   height: 30px;
   line-height: 30px;
 }
-.og.sheet.actor .attributes input.temphp {
+.orinsgate.sheet.actor .attributes input.temphp {
   width: 48%;
 }
-.og.sheet.actor h4.box-title {
+.orinsgate.sheet.actor h4.box-title {
   height: 18px;
   line-height: 16px;
   margin: 4px 8px 2px;
@@ -494,26 +494,26 @@
   color: #4b4a44;
   border-bottom: 1px solid #c9c7b8;
 }
-.og.sheet.actor .tab.attributes {
+.orinsgate.sheet.actor .tab.attributes {
   overflow: hidden;
 }
-.og.sheet.actor ul.attributes {
+.orinsgate.sheet.actor ul.attributes {
   flex: 0 0 60px;
   list-style: none;
   margin: 0;
   padding: 0;
 }
-.og.sheet.actor ul.attributes li.attribute {
+.orinsgate.sheet.actor ul.attributes li.attribute {
   height: 60px;
   margin: 0 5px 0 0;
   border: 2px groove #eeede0;
   border-radius: 4px;
   text-align: center;
 }
-.og.sheet.actor ul.attributes li.attribute:last-child {
+.orinsgate.sheet.actor ul.attributes li.attribute:last-child {
   margin: 0;
 }
-.og.sheet.actor ul.attributes li.attribute .attribute-value {
+.orinsgate.sheet.actor ul.attributes li.attribute .attribute-value {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -523,14 +523,14 @@
   font-size: 20px;
   font-weight: 700;
 }
-.og.sheet.actor ul.attributes li.attribute .attribute-value > * {
+.orinsgate.sheet.actor ul.attributes li.attribute .attribute-value > * {
   font-weight: 400;
   font-size: 24px;
 }
-.og.sheet.actor ul.attributes li.attribute .attribute-value.multiple input {
+.orinsgate.sheet.actor ul.attributes li.attribute .attribute-value.multiple input {
   flex: 0 0 33%;
 }
-.og.sheet.actor ul.attributes li.attribute .attribute-footer {
+.orinsgate.sheet.actor ul.attributes li.attribute .attribute-footer {
   flex: 0 0 18px;
   margin-top: -1px;
   line-height: 18px;
@@ -538,7 +538,7 @@
   font-size: 12px;
   font-weight: 400;
 }
-.og.sheet.actor .ability-scores {
+.orinsgate.sheet.actor .ability-scores {
   flex: 0 0 100px;
   height: 440px;
   list-style: none;
@@ -550,56 +550,56 @@
   border: 2px groove #eeede0;
   border-radius: 3px;
 }
-.og.sheet.actor .ability-scores .ability {
+.orinsgate.sheet.actor .ability-scores .ability {
   height: 70px;
   text-align: center;
   border-bottom: 2px groove #eeede0;
 }
-.og.sheet.actor .ability-scores .ability:last-child {
+.orinsgate.sheet.actor .ability-scores .ability:last-child {
   border-bottom: none;
   margin-bottom: -3px;
 }
-.og.sheet.actor .ability-scores .ability input.ability-score {
+.orinsgate.sheet.actor .ability-scores .ability input.ability-score {
   height: 30px;
   width: 36px;
   margin: 0 auto;
   line-height: 32px;
   font-size: 24px;
 }
-.og.sheet.actor .ability-scores .ability .ability-modifiers {
+.orinsgate.sheet.actor .ability-scores .ability .ability-modifiers {
   height: 24px;
   margin: -8px 0 0;
 }
-.og.sheet.actor .ability-scores .ability .ability-modifiers span.ability-mod,
-.og.sheet.actor .ability-scores .ability .ability-modifiers span.ability-save {
+.orinsgate.sheet.actor .ability-scores .ability .ability-modifiers span.ability-mod,
+.orinsgate.sheet.actor .ability-scores .ability .ability-modifiers span.ability-save {
   flex: 0 0 24px;
   height: 22px;
   line-height: 22px;
   font-size: 16px;
   border-top: 2px groove #eeede0;
 }
-.og.sheet.actor .ability-scores .ability .ability-modifiers span.ability-mod {
+.orinsgate.sheet.actor .ability-scores .ability .ability-modifiers span.ability-mod {
   border-right: 2px groove #eeede0;
 }
-.og.sheet.actor .ability-scores .ability .ability-modifiers .ability-proficiency {
+.orinsgate.sheet.actor .ability-scores .ability .ability-modifiers .ability-proficiency {
   line-height: 30px;
 }
-.og.sheet.actor .ability-scores .ability .ability-modifiers span.ability-save {
+.orinsgate.sheet.actor .ability-scores .ability .ability-modifiers span.ability-save {
   border-left: 2px groove #eeede0;
 }
-.og.sheet.actor .proficiency-toggle {
+.orinsgate.sheet.actor .proficiency-toggle {
   color: #b5b3a4;
   font-size: 12px;
 }
-.og.sheet.actor .proficient .proficiency-toggle {
+.orinsgate.sheet.actor .proficient .proficiency-toggle {
   color: #4b4a44;
 }
-.og.sheet.actor .locked .proficiency-toggle {
+.orinsgate.sheet.actor .locked .proficiency-toggle {
   color: #b5b3a4;
   text-shadow: none;
   cursor: default;
 }
-.og.sheet.actor ul.skills-list {
+.orinsgate.sheet.actor ul.skills-list {
   flex: 0 0 180px;
   height: 440px;
   list-style: none;
@@ -608,199 +608,199 @@
   border: 2px groove #eeede0;
   border-radius: 3px;
 }
-.og.sheet.actor ul.skills-list li.skill {
+.orinsgate.sheet.actor ul.skills-list li.skill {
   height: 24px;
   padding: 3px 2px;
 }
-.og.sheet.actor ul.skills-list li.skill:nth-child(even) {
+.orinsgate.sheet.actor ul.skills-list li.skill:nth-child(even) {
   background: rgba(0, 0, 0, 0.05);
 }
-.og.sheet.actor ul.skills-list li.skill h4 {
+.orinsgate.sheet.actor ul.skills-list li.skill h4 {
   flex: 1px;
   margin: 0;
   font-size: 11px;
   line-height: 18px;
 }
-.og.sheet.actor ul.skills-list li.skill .skill-proficiency {
+.orinsgate.sheet.actor ul.skills-list li.skill .skill-proficiency {
   flex: 0 0 16px;
   line-height: 18px;
 }
-.og.sheet.actor ul.skills-list li.skill .skill-ability {
+.orinsgate.sheet.actor ul.skills-list li.skill .skill-ability {
   flex: 0 0 26px;
   text-transform: capitalize;
 }
-.og.sheet.actor ul.skills-list li.skill .skill-mod {
+.orinsgate.sheet.actor ul.skills-list li.skill .skill-mod {
   flex: 0 0 20px;
 }
-.og.sheet.actor ul.skills-list li.skill .skill-passive {
+.orinsgate.sheet.actor ul.skills-list li.skill .skill-passive {
   flex: 0 0 26px;
   text-align: center;
   color: #7a7971;
 }
-.og.sheet.actor .counters {
+.orinsgate.sheet.actor .counters {
   flex: none;
   padding: 5px 0;
   margin: 0;
   border-bottom: 2px groove #eeede0;
 }
-.og.sheet.actor .counters .counter {
+.orinsgate.sheet.actor .counters .counter {
   height: 20px;
   line-height: 20px;
 }
-.og.sheet.actor .counters .counter h4 {
+.orinsgate.sheet.actor .counters .counter h4 {
   flex: auto;
   margin: 0;
   font-size: 13px;
   font-weight: bold;
   color: #4b4a44;
 }
-.og.sheet.actor .counters .counter .counter-value {
+.orinsgate.sheet.actor .counters .counter .counter-value {
   flex: none;
   text-align: right;
 }
-.og.sheet.actor .counters .counter .counter-value > * {
+.orinsgate.sheet.actor .counters .counter .counter-value > * {
   display: inline;
 }
-.og.sheet.actor .counters .counter input[type="text"] {
+.orinsgate.sheet.actor .counters .counter input[type="text"] {
   height: 20px;
   max-width: 20px;
   margin: 0;
   padding: 0;
   text-align: center;
 }
-.og.sheet.actor .counters .counter input[type="checkbox"] {
+.orinsgate.sheet.actor .counters .counter input[type="checkbox"] {
   position: relative;
   width: 16px;
   height: 16px;
   margin: 0;
   top: 4px;
 }
-.og.sheet.actor .counters .counter span.sep {
+.orinsgate.sheet.actor .counters .counter span.sep {
   font-size: 12px;
 }
-.og.sheet.actor .center-pane {
+.orinsgate.sheet.actor .center-pane {
   height: 100%;
   padding: 0 5px 0 3px;
   overflow-y: auto;
   scrollbar-width: thin;
 }
-.og.sheet.actor .traits .form-group,
-.og.sheet.actor .traits .form-group-stacked {
+.orinsgate.sheet.actor .traits .form-group,
+.orinsgate.sheet.actor .traits .form-group-stacked {
   margin: 0 0 3px 0;
   justify-content: space-between;
 }
-.og.sheet.actor .traits .configure-flags {
+.orinsgate.sheet.actor .traits .configure-flags {
   flex: 1;
 }
-.og.sheet.actor .traits label {
+.orinsgate.sheet.actor .traits label {
   flex: none;
   line-height: 20px;
   font-weight: bold;
   margin: 0 10px 0 0;
 }
-.og.sheet.actor .traits select {
+.orinsgate.sheet.actor .traits select {
   max-width: 200px;
 }
-.og.sheet.actor .traits input {
+.orinsgate.sheet.actor .traits input {
   text-align: right;
 }
-.og.sheet.actor .traits i.fas {
+.orinsgate.sheet.actor .traits i.fas {
   float: right;
   margin-right: 3px;
   text-align: right;
   color: #999;
 }
-.og.sheet.actor .traits i.fas:hover {
+.orinsgate.sheet.actor .traits i.fas:hover {
   color: #111;
   text-shadow: 0 0 10px red;
 }
-.og.sheet.actor .traits .inactive {
+.orinsgate.sheet.actor .traits .inactive {
   color: #7a7971;
 }
-.og.sheet.actor .tab.features,
-.og.sheet.actor .tab.inventory,
-.og.sheet.actor .tab.powerbook {
+.orinsgate.sheet.actor .tab.features,
+.orinsgate.sheet.actor .tab.inventory,
+.orinsgate.sheet.actor .tab.powerbook {
   overflow-y: hidden;
 }
-.og.sheet.actor .inventory-filters {
+.orinsgate.sheet.actor .inventory-filters {
   margin: 0 8px;
   flex: 0 0 20px;
   justify-content: flex-end;
 }
-.og.sheet.actor .inventory-filters .currency {
+.orinsgate.sheet.actor .inventory-filters .currency {
   flex: 0 0 100%;
   list-style: none;
   margin: 4px 0 8px;
   padding: 0;
   font-size: 12px;
 }
-.og.sheet.actor .inventory-filters .currency label {
+.orinsgate.sheet.actor .inventory-filters .currency label {
   flex: 0;
   margin-left: 8px;
   text-align: right;
   line-height: 20px;
   color: #7a7971;
 }
-.og.sheet.actor .inventory-filters .currency input[type="text"] {
+.orinsgate.sheet.actor .inventory-filters .currency input[type="text"] {
   flex: 0 0 48px;
   text-align: center;
   margin-left: 8px;
   border-bottom: 2px groove #eeede0;
 }
-.og.sheet.actor .inventory-list {
+.orinsgate.sheet.actor .inventory-list {
   list-style: none;
   margin: 0;
   padding: 0 5px;
   overflow-y: auto;
   scrollbar-width: thin;
 }
-.og.sheet.actor .inventory-list .item {
+.orinsgate.sheet.actor .inventory-list .item {
   line-height: 30px;
   padding: 0 2px;
   border-bottom: 1px solid #c9c7b8;
 }
-.og.sheet.actor .inventory-list .item:last-child {
+.orinsgate.sheet.actor .inventory-list .item:last-child {
   border-bottom: none;
 }
-.og.sheet.actor .inventory-list .item .item-name {
+.orinsgate.sheet.actor .inventory-list .item .item-name {
   cursor: pointer;
   max-height: 30px;
   overflow: hidden;
 }
-.og.sheet.actor .inventory-list .item .item-name .item-image {
+.orinsgate.sheet.actor .inventory-list .item .item-name .item-image {
   flex: 0 0 30px;
   background-size: 30px;
   margin-right: 5px;
 }
-.og.sheet.actor .inventory-list .item .item-name h4 {
+.orinsgate.sheet.actor .inventory-list .item .item-name h4 {
   margin: 0;
   white-space: nowrap;
   overflow-x: hidden;
 }
-.og.sheet.actor .inventory-list .item .item-name.rollable:hover .item-image {
+.orinsgate.sheet.actor .inventory-list .item .item-name.rollable:hover .item-image {
   background-image: url("/icons/svg/d20-grey.svg") !important;
 }
-.og.sheet.actor .inventory-list .item .item-name.rollable .item-image:hover {
+.orinsgate.sheet.actor .inventory-list .item .item-name.rollable .item-image:hover {
   background-image: url("/icons/svg/d20-black.svg") !important;
 }
-.og.sheet.actor .inventory-list .item .item-name i.attuned {
+.orinsgate.sheet.actor .inventory-list .item .item-name i.attuned {
   color: #7a7971;
 }
-.og.sheet.actor .inventory-list .item .item-uses input {
+.orinsgate.sheet.actor .inventory-list .item .item-uses input {
   width: 24px;
   text-align: center;
 }
-.og.sheet.actor .inventory-list .item .item-properties {
+.orinsgate.sheet.actor .inventory-list .item .item-properties {
   margin-top: 3px;
 }
-.og.sheet.actor .inventory-list .item .item-recharge {
+.orinsgate.sheet.actor .inventory-list .item .item-recharge {
   flex: 0 0 80px;
   text-align: right;
   font-size: 11px;
   color: #7a7971;
   white-space: nowrap;
 }
-.og.sheet.actor .inventory-list .inventory-header {
+.orinsgate.sheet.actor .inventory-list .inventory-header {
   margin: 2px 0;
   padding: 0;
   background: rgba(0, 0, 0, 0.05);
@@ -808,7 +808,7 @@
   font-weight: bold;
   line-height: 24px;
 }
-.og.sheet.actor .inventory-list .inventory-header h3 {
+.orinsgate.sheet.actor .inventory-list .inventory-header h3 {
   margin: 0 -5px 0 0;
   padding-left: 5px;
   font-family: "Modesto Condensed", "Palatino Linotype", serif;
@@ -816,10 +816,10 @@
   font-weight: 700;
   font-size: 16px;
 }
-.og.sheet.actor .inventory-list .inventory-header .item-controls a.item-create {
+.orinsgate.sheet.actor .inventory-list .inventory-header .item-controls a.item-create {
   flex: 0 0 100%;
 }
-.og.sheet.actor .inventory-list .item-detail {
+.orinsgate.sheet.actor .inventory-list .item-detail {
   flex: 0 0 70px;
   font-size: 12px;
   color: #7a7971;
@@ -829,23 +829,23 @@
   white-space: nowrap;
   overflow: hidden;
 }
-.og.sheet.actor .inventory-list .item-detail:last-child {
+.orinsgate.sheet.actor .inventory-list .item-detail:last-child {
   border-right: none;
 }
-.og.sheet.actor .inventory-list .item-detail.item-action {
+.orinsgate.sheet.actor .inventory-list .item-detail.item-action {
   flex: 0 0 100px;
 }
-.og.sheet.actor .inventory-list .item-weight {
+.orinsgate.sheet.actor .inventory-list .item-weight {
   flex: 0 0 60px;
   border-left: 1px solid #c9c7b8;
   border-right: 1px solid #c9c7b8;
 }
-.og.sheet.actor .inventory-list .item-list {
+.orinsgate.sheet.actor .inventory-list .item-list {
   list-style: none;
   margin: 0;
   padding: 0;
 }
-.og.sheet.actor .inventory-list .item-controls {
+.orinsgate.sheet.actor .inventory-list .item-controls {
   flex: 0 0 44px;
   display: flex;
   flex-direction: row;
@@ -853,35 +853,35 @@
   justify-content: flex-start;
   justify-content: flex-end;
 }
-.og.sheet.actor .inventory-list .item-controls > * {
+.orinsgate.sheet.actor .inventory-list .item-controls > * {
   flex: 1;
 }
-.og.sheet.actor .inventory-list .item-controls .flex1 {
+.orinsgate.sheet.actor .inventory-list .item-controls .flex1 {
   flex: 1;
 }
-.og.sheet.actor .inventory-list .item-controls .flex2 {
+.orinsgate.sheet.actor .inventory-list .item-controls .flex2 {
   flex: 2;
 }
-.og.sheet.actor .inventory-list .item-controls .flex3 {
+.orinsgate.sheet.actor .inventory-list .item-controls .flex3 {
   flex: 3;
 }
-.og.sheet.actor .inventory-list .item-controls .flex4 {
+.orinsgate.sheet.actor .inventory-list .item-controls .flex4 {
   flex: 4;
 }
-.og.sheet.actor .inventory-list .item-controls a {
+.orinsgate.sheet.actor .inventory-list .item-controls a {
   flex: 0 0 22px;
   font-size: 12px;
   text-align: center;
   color: #7a7971;
 }
-.og.sheet.actor .inventory-list .item-summary {
+.orinsgate.sheet.actor .inventory-list .item-summary {
   flex: 0 0 100%;
   font-size: 12px;
   line-height: 16px;
   padding: 0.25em 0.5em;
   border-top: 1px solid #c9c7b8;
 }
-.og.sheet.actor .encumbrance {
+.orinsgate.sheet.actor .encumbrance {
   flex: 0 0 12px;
   background: #7a7971;
   margin: 1px 15px 0 1px;
@@ -889,7 +889,7 @@
   border-radius: 3px;
   position: relative;
 }
-.og.sheet.actor .encumbrance .encumbrance-bar {
+.orinsgate.sheet.actor .encumbrance .encumbrance-bar {
   position: absolute;
   top: 1px;
   left: 1px;
@@ -898,7 +898,7 @@
   border: 1px solid #cde4ff;
   border-radius: 2px;
 }
-.og.sheet.actor .encumbrance .encumbrance-label {
+.orinsgate.sheet.actor .encumbrance .encumbrance-label {
   height: 10px;
   padding: 0 5px;
   position: absolute;
@@ -910,17 +910,17 @@
   color: #EEE;
   text-shadow: 0 0 5px #000;
 }
-.og.sheet.actor .encumbrance .encumbrance-breakpoint {
+.orinsgate.sheet.actor .encumbrance .encumbrance-breakpoint {
   display: block;
   position: absolute;
 }
-.og.sheet.actor .encumbrance .encumbrance-breakpoint.encumbrance-33 {
+.orinsgate.sheet.actor .encumbrance .encumbrance-breakpoint.encumbrance-33 {
   left: 33%;
 }
-.og.sheet.actor .encumbrance .encumbrance-breakpoint.encumbrance-66 {
+.orinsgate.sheet.actor .encumbrance .encumbrance-breakpoint.encumbrance-66 {
   left: 66%;
 }
-.og.sheet.actor .encumbrance .arrow-up {
+.orinsgate.sheet.actor .encumbrance .arrow-up {
   bottom: 0;
   width: 0;
   height: 0;
@@ -928,7 +928,7 @@
   border-right: 4px solid transparent;
   border-bottom: 4px solid #666;
 }
-.og.sheet.actor .encumbrance .arrow-down {
+.orinsgate.sheet.actor .encumbrance .arrow-down {
   top: 0;
   width: 0;
   height: 0;
@@ -936,31 +936,31 @@
   border-right: 4px solid transparent;
   border-top: 4px solid #666;
 }
-.og.sheet.actor .encumbrance.encumbered .arrow-up {
+.orinsgate.sheet.actor .encumbrance.encumbered .arrow-up {
   border-bottom: 4px solid #000;
 }
-.og.sheet.actor .encumbrance.encumbered .arrow-down {
+.orinsgate.sheet.actor .encumbrance.encumbered .arrow-down {
   border-top: 4px solid #000;
 }
-.og.sheet.actor .powercasting-ability {
+.orinsgate.sheet.actor .powercasting-ability {
   flex: 0 0 240px;
   margin: 0;
 }
-.og.sheet.actor .powercasting-ability input,
-.og.sheet.actor .powercasting-ability span {
+.orinsgate.sheet.actor .powercasting-ability input,
+.orinsgate.sheet.actor .powercasting-ability span {
   flex: 0 0 32px;
   text-align: center;
 }
-.og.sheet.actor .powercasting-ability select {
+.orinsgate.sheet.actor .powercasting-ability select {
   margin: 0 5px;
   flex: 0 0 150px;
 }
-.og.sheet.actor .powercasting-ability h3.spell-dc {
+.orinsgate.sheet.actor .powercasting-ability h3.spell-dc {
   flex: 1;
   text-align: right;
 }
-.og.sheet.actor .power-slots,
-.og.sheet.actor .power-comps {
+.orinsgate.sheet.actor .power-slots,
+.orinsgate.sheet.actor .power-comps {
   flex: 0 0 75px;
   padding-right: 5px;
   text-align: right;
@@ -968,32 +968,32 @@
   color: #7a7971;
   border-right: 1px solid #c9c7b8;
 }
-.og.sheet.actor .power-slots input {
+.orinsgate.sheet.actor .power-slots input {
   display: inline;
   max-width: 20px;
 }
-.og.sheet.actor .power-slots .sep {
+.orinsgate.sheet.actor .power-slots .sep {
   font-size: 13px;
   font-weight: normal;
 }
-.og.sheet.actor .power-uses {
+.orinsgate.sheet.actor .power-uses {
   padding-right: 8px;
   text-align: right !important;
 }
-.og.sheet.actor .power-school,
-.og.sheet.actor .power-action,
-.og.sheet.actor .power-target {
+.orinsgate.sheet.actor .power-school,
+.orinsgate.sheet.actor .power-action,
+.orinsgate.sheet.actor .power-target {
   flex: 0 0 100px;
   font-size: 12px;
   color: #7a7971;
   text-align: center;
   border-right: 1px solid #c9c7b8;
 }
-.og.sheet.actor .power-component {
+.orinsgate.sheet.actor .power-component {
   line-height: 14px;
 }
-.og.sheet.actor .power-component.C,
-.og.sheet.actor .power-component.R {
+.orinsgate.sheet.actor .power-component.C,
+.orinsgate.sheet.actor .power-component.R {
   display: inline-block;
   text-align: center;
   padding-top: 1px;
@@ -1003,13 +1003,13 @@
   border: 1px solid transparent;
   border-radius: 8px;
 }
-.og.sheet.actor .powerbook-empty .item-controls {
+.orinsgate.sheet.actor .powerbook-empty .item-controls {
   flex: 1;
 }
-.og.sheet.actor .editor {
+.orinsgate.sheet.actor .editor {
   padding: 0 8px;
 }
-.og.sheet.item {
+.orinsgate.sheet.item {
   min-height: 420px;
   /* ----------------------------------------- */
   /*  Sheet Header                             */
@@ -1027,10 +1027,10 @@
   /*  Loot Sheet (No Tabs)                     */
   /* ----------------------------------------- */
 }
-.og.sheet.item .sheet-header img.profile {
+.orinsgate.sheet.item .sheet-header img.profile {
   border: 2px solid #000;
 }
-.og.sheet.item .sheet-header .item-subtitle {
+.orinsgate.sheet.item .sheet-header .item-subtitle {
   flex: 0 0 80px;
   height: 60px;
   margin: 0;
@@ -1038,49 +1038,49 @@
   text-align: right;
   color: #7a7971;
 }
-.og.sheet.item .sheet-header .item-subtitle .item-type {
+.orinsgate.sheet.item .sheet-header .item-subtitle .item-type {
   font-size: 24px;
   line-height: 26px;
   margin: 0;
 }
-.og.sheet.item .sheet-header .item-subtitle .item-status {
+.orinsgate.sheet.item .sheet-header .item-subtitle .item-status {
   font-size: 16px;
   line-height: 24px;
 }
-.og.sheet.item .sheet-navigation {
+.orinsgate.sheet.item .sheet-navigation {
   margin-bottom: 5px;
 }
-.og.sheet.item .sheet-navigation .item {
+.orinsgate.sheet.item .sheet-navigation .item {
   font-size: 18px;
 }
-.og.sheet.item .sheet-body {
+.orinsgate.sheet.item .sheet-body {
   overflow: hidden;
 }
-.og.sheet.item .sheet-body .tab {
+.orinsgate.sheet.item .sheet-body .tab {
   padding: 0 5px;
   overflow: hidden auto;
 }
-.og.sheet.item .sheet-body .item-properties {
+.orinsgate.sheet.item .sheet-body .item-properties {
   flex: 0 0 120px;
   margin: 5px 5px 5px 0;
   padding-right: 5px;
   border-right: 2px groove #eeede0;
 }
-.og.sheet.item .sheet-body .item-properties .form-group {
+.orinsgate.sheet.item .sheet-body .item-properties .form-group {
   margin: 0;
 }
-.og.sheet.item .sheet-body .item-properties .form-group label {
+.orinsgate.sheet.item .sheet-body .item-properties .form-group label {
   line-height: 20px;
 }
-.og.sheet.item .sheet-body .item-properties .form-group input {
+.orinsgate.sheet.item .sheet-body .item-properties .form-group input {
   text-align: right;
 }
-.og.sheet.item .sheet-body .item-properties .properties-list {
+.orinsgate.sheet.item .sheet-body .item-properties .properties-list {
   list-style: none;
   margin: 0;
   padding: 0;
 }
-.og.sheet.item .sheet-body .item-properties .properties-list li {
+.orinsgate.sheet.item .sheet-body .item-properties .properties-list li {
   margin: 3px 0;
   padding: 0 2px;
   background: rgba(0, 0, 0, 0.05);
@@ -1089,79 +1089,79 @@
   font-size: 12px;
   line-height: 18px;
 }
-.og.sheet.item .details input[type="text"],
-.og.sheet.item .details select {
+.orinsgate.sheet.item .details input[type="text"],
+.orinsgate.sheet.item .details select {
   height: 24px;
   border: 1px solid #7a7971;
   background: rgba(0, 0, 0, 0.05);
 }
-.og.sheet.item .details .form-group span {
+.orinsgate.sheet.item .details .form-group span {
   text-align: center;
   line-height: 24px;
 }
-.og.sheet.item .details .form-group.input-select select {
+.orinsgate.sheet.item .details .form-group.input-select select {
   flex: 1.8;
 }
-.og.sheet.item .details .form-group.input-select-select select {
+.orinsgate.sheet.item .details .form-group.input-select-select select {
   flex: 1.5;
 }
-.og.sheet.item .details .form-group.uses-per input {
+.orinsgate.sheet.item .details .form-group.uses-per input {
   flex: 1;
 }
-.og.sheet.item .details .form-group.uses-per span {
+.orinsgate.sheet.item .details .form-group.uses-per span {
   flex: 0 0 16px;
 }
-.og.sheet.item .details .form-group.uses-per select {
+.orinsgate.sheet.item .details .form-group.uses-per select {
   flex: 3;
 }
-.og.sheet.item .details span.sep {
+.orinsgate.sheet.item .details span.sep {
   flex: 0 0 8px;
 }
-.og.sheet.item .details .prepared {
+.orinsgate.sheet.item .details .prepared {
   flex: 1.3 !important;
   text-align: right;
   padding-right: 10px;
 }
-.og.sheet.item .details .power-materials {
+.orinsgate.sheet.item .details .power-materials {
   flex: 0 0 100%;
   margin: 0.25em 0;
   justify-content: flex-end;
 }
-.og.sheet.item .details .power-materials label {
+.orinsgate.sheet.item .details .power-materials label {
   flex: 0 0 64px;
   text-align: right;
   margin-right: 5px;
   font-size: 12px;
   line-height: 24px;
 }
-.og.sheet.item .details .power-materials input[type="text"] {
+.orinsgate.sheet.item .details .power-materials input[type="text"] {
   flex: 0 0 48px;
   margin-right: 10px;
 }
-.og.sheet.item h4.damage-header {
+.orinsgate.sheet.item h4.damage-header {
   margin: 0;
   padding: 0;
   font-weight: bold;
   line-height: 24px;
   color: #4b4a44;
 }
-.og.sheet.item .damage-parts {
+.orinsgate.sheet.item .damage-parts {
   list-style: none;
   margin: 0;
   padding: 0;
 }
-.og.sheet.item .damage-parts .damage-part {
+.orinsgate.sheet.item .damage-parts .damage-part {
   flex: 0 0 100%;
   padding: 0;
 }
-.og.sheet.item .damage-parts .damage-part input {
+.orinsgate.sheet.item .damage-parts .damage-part input {
   flex: 3;
 }
-.og.sheet.item .damage-parts .damage-part select {
+.orinsgate.sheet.item .damage-parts .damage-part select {
   margin-left: 5px;
   flex: 1;
 }
-.og.sheet.item .damage-control {
+.orinsgate.sheet.item .damage-control {
   width: 18px;
   flex: 0 0 18px;
   line-height: 24px;
@@ -1169,45 +1169,45 @@
   text-align: right;
   color: #7a7971;
 }
-.og.sheet.item .recharge.form-group span {
+.orinsgate.sheet.item .recharge.form-group span {
   text-align: right;
   padding-right: 3px;
 }
-.og.sheet.item .recharge.form-group input[type="text"] {
+.orinsgate.sheet.item .recharge.form-group input[type="text"] {
   flex: 0 0 32px;
   text-align: center;
 }
-.og.sheet.item .recharge.form-group label.checkbox {
+.orinsgate.sheet.item .recharge.form-group label.checkbox {
   flex: none;
 }
-.og.sheet.item .recharge.form-group label.checkbox input {
+.orinsgate.sheet.item .recharge.form-group label.checkbox input {
   width: 16px;
   height: 16px;
   top: 4px;
 }
-.og.sheet.item .weapon-properties label.checkbox {
+.orinsgate.sheet.item .weapon-properties label.checkbox {
   flex: 0 0 98px;
 }
-.og.sheet.item .loot-header {
+.orinsgate.sheet.item .loot-header {
   margin-bottom: 10px;
 }
 /* ----------------------------------------- */
 /*  Chat Cards
 /* ----------------------------------------- */
-.og.chat-card {
+.orinsgate.chat-card {
   font-style: normal;
   font-size: 12px;
 }
-.og.chat-card .card-header {
+.orinsgate.chat-card .card-header {
   padding: 3px 0;
   border-top: 2px groove #FFF;
   border-bottom: 2px groove #FFF;
 }
-.og.chat-card .card-header img {
+.orinsgate.chat-card .card-header img {
   flex: 0 0 36px;
   margin-right: 5px;
 }
-.og.chat-card .card-header h3 {
+.orinsgate.chat-card .card-header h3 {
   flex: 1;
   margin: 0;
   line-height: 36px;
@@ -1216,49 +1216,49 @@
   font-weight: 700;
   color: #4b4a44;
 }
-.og.chat-card .card-header h3:hover {
+.orinsgate.chat-card .card-header h3:hover {
   color: #111;
   text-shadow: 0 0 10px red;
 }
-.og.chat-card .card-content {
+.orinsgate.chat-card .card-content {
   margin: 5px 0;
 }
-.og.chat-card .card-content h3 {
+.orinsgate.chat-card .card-content h3 {
   font-size: 12px;
   margin: 0;
   font-weight: bold;
 }
-.og.chat-card .card-content > * {
+.orinsgate.chat-card .card-content > * {
   -webkit-user-select: text;
   -moz-user-select: text;
   -ms-user-select: text;
   user-select: text;
 }
-.og.chat-card .card-buttons {
+.orinsgate.chat-card .card-buttons {
   margin: 5px 0;
 }
-.og.chat-card .card-buttons span {
+.orinsgate.chat-card .card-buttons span {
   display: block;
   line-height: 28px;
   text-align: center;
   border: 1px solid #CCC;
 }
-.og.chat-card .card-buttons button {
+.orinsgate.chat-card .card-buttons button {
   font-size: 12px;
   height: 24px;
   line-height: 20px;
   margin: 2px 0;
 }
-.og.chat-card .card-footer {
+.orinsgate.chat-card .card-footer {
   padding: 3px 0 0;
   border-top: 2px groove #FFF;
 }
-.og.chat-card .card-footer span {
+.orinsgate.chat-card .card-footer span {
   border-right: 2px groove #FFF;
   padding: 0 5px 0 0;
   font-size: 10px;
 }
-.og.chat-card .card-footer span:last-child {
+.orinsgate.chat-card .card-footer span:last-child {
   border-right: none;
   padding-right: 0;
 }
@@ -1281,7 +1281,7 @@
 /* ----------------------------------------- */
 /*  Basic Structure                          */
 /* ----------------------------------------- */
-.og.sheet.actor.character {
+.orinsgate.sheet.actor.character {
   min-width: 720px;
   min-height: 680px;
   /* ----------------------------------------- */
@@ -1294,30 +1294,30 @@
   /*  Item Controls                            */
   /* ----------------------------------------- */
 }
-.og.sheet.actor.character .sheet-header img.profile {
+.orinsgate.sheet.actor.character .sheet-header img.profile {
   flex: 0 0 160px;
   max-width: 160px;
   height: 160px;
 }
-.og.sheet.actor.character .sheet-header .charlevel {
+.orinsgate.sheet.actor.character .sheet-header .charlevel {
   flex: 0 0 20px;
   height: 20px;
   font-size: 18px;
   color: #7a7971;
   white-space: nowrap;
 }
-.og.sheet.actor.character .sheet-header .experience {
+.orinsgate.sheet.actor.character .sheet-header .experience {
   flex: 0 0 32px;
   margin-bottom: -5px;
   align-items: center;
   font-size: 18px;
 }
-.og.sheet.actor.character .sheet-header .experience span.max {
+.orinsgate.sheet.actor.character .sheet-header .experience span.max {
   color: #7a7971;
   flex: none;
   margin-left: 3px;
 }
-.og.sheet.actor.character .sheet-header .xpbar {
+.orinsgate.sheet.actor.character .sheet-header .xpbar {
   flex: 0 0 8px;
   width: 100%;
   margin-bottom: 5px;
@@ -1325,7 +1325,7 @@
   border: 1px solid #000;
   border-radius: 3px;
 }
-.og.sheet.actor.character .sheet-header .xpbar .bar {
+.orinsgate.sheet.actor.character .sheet-header .xpbar .bar {
   height: 4px;
   margin: 1px;
   display: block;
@@ -1333,27 +1333,27 @@
   border: 1px solid #000;
   border-radius: 2px;
 }
-.og.sheet.actor.character .sheet-header .attributes a.rest {
+.orinsgate.sheet.actor.character .sheet-header .attributes a.rest {
   border: 1px solid #b5b3a4;
   border-radius: 2px;
   background: rgba(0, 0, 0, 0.05);
   padding: 0 3px;
   margin: 0 3px;
 }
-.og.sheet.actor.character .sheet-header .attributes .hit-dice {
+.orinsgate.sheet.actor.character .sheet-header .attributes .hit-dice {
   font-size: 24px;
 }
-.og.sheet.actor.character .sheet-header .attributes .initiative .attribute-footer input {
+.orinsgate.sheet.actor.character .sheet-header .attributes .initiative .attribute-footer input {
   width: 32px;
 }
-.og.sheet.actor.character .sheet-header .summary .proficiency {
+.orinsgate.sheet.actor.character .sheet-header .summary .proficiency {
   text-align: right;
   padding-right: 5px;
 }
-.og.sheet.actor.character .resource .attribute-value input {
+.orinsgate.sheet.actor.character .resource .attribute-value input {
   flex: 0 0 25%;
 }
-.og.sheet.actor.character .resource .attribute-value label.recharge {
+.orinsgate.sheet.actor.character .resource .attribute-value label.recharge {
   height: 32px;
   position: relative;
   font-family: "Signika", sans-serif;
@@ -1361,98 +1361,98 @@
   text-align: center;
   color: #4b4a44;
 }
-.og.sheet.actor.character .resource .attribute-value label.recharge input[type="checkbox"] {
+.orinsgate.sheet.actor.character .resource .attribute-value label.recharge input[type="checkbox"] {
   height: 14px;
   width: 14px;
   margin: 0;
   top: -6px;
 }
-.og.sheet.actor.character ul.skills-list {
+.orinsgate.sheet.actor.character ul.skills-list {
   flex: 0 0 212px;
 }
-.og.sheet.actor.character ul.skills-list li.skill {
+.orinsgate.sheet.actor.character ul.skills-list li.skill {
   padding: 3px;
 }
-.og.sheet.actor.character ul.skills-list li.skill h4 {
+.orinsgate.sheet.actor.character ul.skills-list li.skill h4 {
   flex: 1px;
   margin: 0;
   font-size: 13px;
 }
-.og.sheet.actor.character .item-detail.player-class {
+.orinsgate.sheet.actor.character .item-detail.player-class {
   flex: 0 0 180px;
   text-align: right;
   padding-right: 10px;
 }
-.og.sheet.actor.character .inventory .item-controls,
-.og.sheet.actor.character .powerbook .item-controls {
+.orinsgate.sheet.actor.character .inventory .item-controls,
+.orinsgate.sheet.actor.character .powerbook .item-controls {
   flex: 0 0 68px;
 }
-.og.sheet.actor.character .inventory .item-controls .item-toggle,
-.og.sheet.actor.character .powerbook .item-controls .item-toggle {
+.orinsgate.sheet.actor.character .inventory .item-controls .item-toggle,
+.orinsgate.sheet.actor.character .powerbook .item-controls .item-toggle {
   color: #b5b3a4;
 }
-.og.sheet.actor.character .inventory .item-controls .item-toggle.active,
-.og.sheet.actor.character .powerbook .item-controls .item-toggle.active {
+.orinsgate.sheet.actor.character .inventory .item-controls .item-toggle.active,
+.orinsgate.sheet.actor.character .powerbook .item-controls .item-toggle.active {
   color: #4b4a44;
 }
-.og.sheet.actor.character .inventory .item-controls .item-toggle.fixed,
-.og.sheet.actor.character .powerbook .item-controls .item-toggle.fixed {
+.orinsgate.sheet.actor.character .inventory .item-controls .item-toggle.fixed,
+.orinsgate.sheet.actor.character .powerbook .item-controls .item-toggle.fixed {
   color: #44191A;
 }
-.og.sheet.actor.character .inventory .item-controls .item-toggle.fixed:hover,
-.og.sheet.actor.character .powerbook .item-controls .item-toggle.fixed:hover {
+.orinsgate.sheet.actor.character .inventory .item-controls .item-toggle.fixed:hover,
+.orinsgate.sheet.actor.character .powerbook .item-controls .item-toggle.fixed:hover {
   text-shadow: none;
 }
 /* ----------------------------------------- */
 /*  Basic Structure                          */
 /* ----------------------------------------- */
-.og.sheet.actor.npc {
+.orinsgate.sheet.actor.npc {
   min-width: 600px;
   min-height: 680px;
 }
-.og.sheet.actor.npc .header-exp {
+.orinsgate.sheet.actor.npc .header-exp {
   flex: 0 0 80px;
   justify-content: center;
 }
-.og.sheet.actor.npc .header-exp .cr {
+.orinsgate.sheet.actor.npc .header-exp .cr {
   flex: 0 0 32px;
   line-height: 28px;
   margin-bottom: -5px;
   font-size: 24px;
 }
-.og.sheet.actor.npc .header-exp .cr input {
+.orinsgate.sheet.actor.npc .header-exp .cr input {
   width: 32px;
   padding: 0;
   text-align: center;
 }
-.og.sheet.actor.npc .header-exp .experience {
+.orinsgate.sheet.actor.npc .header-exp .experience {
   flex: 0 0 18px;
   color: #7a7971;
   font-size: 16px;
 }
-.og.sheet.actor.npc .summary {
+.orinsgate.sheet.actor.npc .summary {
   font-size: 18px;
 }
-.og.sheet.actor.npc .powercasting-ability label {
+.orinsgate.sheet.actor.npc .powercasting-ability label {
   flex: none;
 }
-.og.sheet.actor.vehicle .features .item-controls {
+.orinsgate.sheet.actor.vehicle .features .item-controls {
   flex: 0 0 68px;
 }
-.og.sheet.actor.vehicle .features .item-controls .item-toggle {
+.orinsgate.sheet.actor.vehicle .features .item-controls .item-toggle {
   color: #b5b3a4;
 }
-.og.sheet.actor.vehicle .features .item-controls .item-toggle.active {
+.orinsgate.sheet.actor.vehicle .features .item-controls .item-toggle.active {
   color: #4b4a44;
 }
-.og.sheet.actor.vehicle .counters .counter.creature-cap .counter-value {
+.orinsgate.sheet.actor.vehicle .counters .counter.creature-cap .counter-value {
   flex: 1;
 }
-.og.sheet.actor.vehicle .counters .counter.creature-cap input {
+.orinsgate.sheet.actor.vehicle .counters .counter.creature-cap input {
   max-width: none;
   text-align: right;
 }
-.og.sheet.actor.vehicle .counters .counter.cargo-cap input {
+.orinsgate.sheet.actor.vehicle .counters .counter.cargo-cap input {
   max-width: 40px;
   text-align: right;
 }
