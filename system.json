@@ -37,10 +37,10 @@
       "entity": "Item"
     },
     {
-      "name": "powers",
-      "label": "Powers (SRD)",
+      "name": "spells",
+      "label": "Spells (SRD)",
       "system": "orinsgate",
-      "path": "./packs/powers.db",
+      "path": "./packs/spells.db",
       "entity": "Item"
     },
     {
@@ -70,6 +70,13 @@
       "system": "orinsgate",
       "path": "./packs/rules.db",
       "entity": "JournalEntry"
+    },
+    {
+      "name": "powers",
+      "label": "Powers",
+      "system": "orinsgate",
+      "path": "./packs/powers.db",
+      "entity": "Item"
     }
   ],
   "languages": [
