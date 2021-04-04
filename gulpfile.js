@@ -5,9 +5,9 @@ const less = require('gulp-less');
 /*  Compile LESS
 /* ----------------------------------------- */
 
-const OrinsGate_LESS = ["less/*.less"];
+const DND5E_LESS = ["less/*.less"];
 function compileLESS() {
-  return gulp.src("less/orinsgate.less")
+  return gulp.src("less/dnd5e.less")
     .pipe(less())
     .pipe(gulp.dest("./"))
 }
@@ -18,7 +18,7 @@ const css = gulp.series(compileLESS);
 /* ----------------------------------------- */
 
 function watchUpdates() {
-  gulp.watch(OrinsGate_LESS, css);
+  gulp.watch(DND5E_LESS, css);
 }
 
 /* ----------------------------------------- */

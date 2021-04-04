@@ -3,18 +3,18 @@ export const registerSystemSettings = function() {
   /**
    * Track the system version upon which point a migration was last applied
    */
-  game.settings.register("orinsgate", "systemMigrationVersion", {
+  game.settings.register("dnd5e", "systemMigrationVersion", {
     name: "System Migration Version",
     scope: "world",
     config: false,
-    type: Number,
-    default: 0
+    type: String,
+    default: ""
   });
 
   /**
    * Register resting variants
    */
-  game.settings.register("orinsgate", "restVariant", {
+  game.settings.register("dnd5e", "restVariant", {
     name: "SETTINGS.5eRestN",
     hint: "SETTINGS.5eRestL",
     scope: "world",
@@ -31,7 +31,7 @@ export const registerSystemSettings = function() {
   /**
    * Register diagonal movement rule setting
    */
-  game.settings.register("orinsgate", "diagonalMovement", {
+  game.settings.register("dnd5e", "diagonalMovement", {
     name: "SETTINGS.5eDiagN",
     hint: "SETTINGS.5eDiagL",
     scope: "world",
@@ -49,7 +49,7 @@ export const registerSystemSettings = function() {
   /**
    * Register Initiative formula setting
    */
-  game.settings.register("orinsgate", "initiativeDexTiebreaker", {
+  game.settings.register("dnd5e", "initiativeDexTiebreaker", {
     name: "SETTINGS.5eInitTBN",
     hint: "SETTINGS.5eInitTBL",
     scope: "world",
@@ -61,7 +61,7 @@ export const registerSystemSettings = function() {
   /**
    * Require Currency Carrying Weight
    */
-  game.settings.register("orinsgate", "currencyWeight", {
+  game.settings.register("dnd5e", "currencyWeight", {
     name: "SETTINGS.5eCurWtN",
     hint: "SETTINGS.5eCurWtL",
     scope: "world",
@@ -73,7 +73,7 @@ export const registerSystemSettings = function() {
   /**
    * Option to disable XP bar for session-based or story-based advancement.
    */
-  game.settings.register("orinsgate", "disableExperienceTracking", {
+  game.settings.register("dnd5e", "disableExperienceTracking", {
     name: "SETTINGS.5eNoExpN",
     hint: "SETTINGS.5eNoExpL",
     scope: "world",
@@ -83,21 +83,9 @@ export const registerSystemSettings = function() {
   });
 
   /**
-   * Option to automatically create Power Measured Template on roll
-   */
-  game.settings.register("orinsgate", "alwaysPlacePowerTemplate", {
-    name: "SETTINGS.5eAutoPowerTemplateN",
-    hint: "SETTINGS.5eAutoPowerTemplateL",
-    scope: "client",
-    config: true,
-    default: false,
-    type: Boolean
-  });
-
-  /**
    * Option to automatically collapse Item Card descriptions
    */
-  game.settings.register("orinsgate", "autoCollapseItemCards", {
+  game.settings.register("dnd5e", "autoCollapseItemCards", {
     name: "SETTINGS.5eAutoCollapseCardN",
     hint: "SETTINGS.5eAutoCollapseCardL",
     scope: "client",
@@ -112,7 +100,7 @@ export const registerSystemSettings = function() {
   /**
    * Option to allow GMs to restrict polymorphing to GMs only.
    */
-  game.settings.register('orinsgate', 'allowPolymorphing', {
+  game.settings.register('dnd5e', 'allowPolymorphing', {
     name: 'SETTINGS.5eAllowPolymorphingN',
     hint: 'SETTINGS.5eAllowPolymorphingL',
     scope: 'world',
@@ -124,7 +112,7 @@ export const registerSystemSettings = function() {
   /**
    * Remember last-used polymorph settings.
    */
-  game.settings.register('orinsgate', 'polymorphSettings', {
+  game.settings.register('dnd5e', 'polymorphSettings', {
     scope: 'client',
     default: {
       keepPhysical: false,
@@ -135,7 +123,7 @@ export const registerSystemSettings = function() {
       mergeSkills: false,
       keepClass: false,
       keepFeats: false,
-      keepPowers: false,
+      keepSpells: false,
       keepItems: false,
       keepBio: false,
       keepVision: true,

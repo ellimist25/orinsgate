@@ -1,9 +1,7 @@
 import { d20Roll, damageRoll } from "../dice.js";
 import ShortRestDialog from "../apps/short-rest.js";
 import LongRestDialog from "../apps/long-rest.js";
-import AbilityUseDialog from "../apps/ability-use-dialog.js";
-import AbilityTemplate from "../pixi/ability-template.js";
-import {OrinsGate} from '../config.js';
+import {DND5E} from '../config.js';
 
 /**
  * Extend the base Actor class to implement additional system-specific logic.
@@ -15,62 +13,13 @@ export default class Actor5e extends Actor {
    * @return {boolean}
    */
   get isPolymorphed() {
-    return this.getFlag("orinsgate", "isPolymorphed") || false;
-  }
-
-  /* -------------------------------------------- */
-
-  /**
-   * @override
-   * TODO: This becomes unnecessary after 0.7.x is released
-   */
-  initialize() {
-    try {
-      this.prepareData();
-    } catch(err) {
-      console.error(`Failed to initialize data for ${this.constructor.name} ${this.id}:`);
-      console.error(err);
-    }
-  }
-
-  /* -------------------------------------------- */
-
-  /**
-   * @override
-   * TODO: This becomes unnecessary after 0.7.x is released
-   */
-  prepareData() {
-    const is07x = !isNewerVersion("0.7.1", game.data.version);
-    if ( is07x ) this.data = duplicate(this._data);
-    if (!this.data.img) this.data.img = CONST.DEFAULT_TOKEN;
-    if ( !this.data.name ) this.data.name = "New " + this.entity;
-    this.prepareBaseData();
-    this.prepareEmbeddedEntities();
-    if ( is07x ) this.applyActiveEffects();
-    this.prepareDerivedData();
-  }
-
-  /* -------------------------------------------- */
-
-  /**
-   * @override
-   * TODO: This becomes unnecessary after 0.7.x is released
-   */
-  applyActiveEffects() {
-    if (!isNewerVersion("0.7.1", game.data.version)) return super.applyActiveEffects();
+    return this.getFlag("dnd5e", "isPolymorphed") || false;
   }
 
   /* -------------------------------------------- */
 
   /** @override */
   prepareBaseData() {
-
-    // Compute initial ability score modifiers in base data since these may be referenced
-    for (let abl of Object.values(this.data.data.abilities)) {
-      abl.mod = Math.floor((abl.value - 10) / 2);
-    }
-
-    // Type-specific base data preparation
     switch ( this.data.type ) {
       case "character":
         return this._prepareCharacterData(this.data);
@@ -87,15 +36,15 @@ export default class Actor5e extends Actor {
   prepareDerivedData() {
     const actorData = this.data;
     const data = actorData.data;
-    const flags = actorData.flags.orinsgate || {};
+    const flags = actorData.flags.dnd5e || {};
     const bonuses = getProperty(data, "bonuses.abilities") || {};
 
     // Retrieve data for polymorphed actors
     let originalSaves = null;
     let originalSkills = null;
     if (this.isPolymorphed) {
-      const transformOptions = this.getFlag('orinsgate', 'transformOptions');
-      const original = game.actors?.get(this.getFlag('orinsgate', 'originalActor'));
+      const transformOptions = this.getFlag('dnd5e', 'transformOptions');
+      const original = game.actors?.get(this.getFlag('dnd5e', 'originalActor'));
       if (original) {
         if (transformOptions.mergeSaves) {
           originalSaves = original.data.data.abilities;
@@ -107,20 +56,28 @@ export default class Actor5e extends Actor {
     }
 
     // Ability modifiers and saves
+    const dcBonus = Number.isNumeric(data.bonuses?.spell?.dc) ? parseInt(data.bonuses.spell.dc) : 0;
     const saveBonus = Number.isNumeric(bonuses.save) ? parseInt(bonuses.save) : 0;
     const checkBonus = Number.isNumeric(bonuses.check) ? parseInt(bonuses.check) : 0;
     for (let [id, abl] of Object.entries(data.abilities)) {
+      if ( flags.diamondSoul ) abl.proficient = 1;  // Diamond Soul is proficient in all saves
       abl.mod = Math.floor((abl.value - 10) / 2);
       abl.prof = (abl.proficient || 0) * data.attributes.prof;
       abl.saveBonus = saveBonus;
       abl.checkBonus = checkBonus;
       abl.save = abl.mod + abl.prof + abl.saveBonus;
+      abl.dc = 8 + abl.mod + data.attributes.prof + dcBonus;
 
       // If we merged saves when transforming, take the highest bonus here.
       if (originalSaves && abl.proficient) {
         abl.save = Math.max(abl.save, originalSaves[id].save);
       }
     }
+
+    // Inventory encumbrance
+    data.attributes.encumbrance = this._computeEncumbrance(actorData);
+
+    // Prepare skills
     this._prepareSkills(actorData, bonuses, checkBonus, originalSkills);
 
     // Determine Initiative Modifier
@@ -131,12 +88,19 @@ export default class Actor5e extends Actor {
     if ( joat ) init.prof = Math.floor(0.5 * data.attributes.prof);
     else if ( athlete ) init.prof = Math.ceil(0.5 * data.attributes.prof);
     else init.prof = 0;
+    init.value = init.value ?? 0;
     init.bonus = init.value + (flags.initiativeAlert ? 5 : 0);
     init.total = init.mod + init.prof + init.bonus;
 
-    // Prepare power-casting data
-    data.attributes.powerdc = this.getPowerDC(data.attributes.powercasting);
-    this._computePowercastingProgression(this.data);
+    // Prepare spell-casting data
+    data.attributes.spelldc = data.abilities[data.attributes.spellcasting]?.dc ?? 10
+    this._computeSpellcastingProgression(this.data);
+
+    // Compute owned item attributes which depend on prepared Actor data
+    this.items.forEach(item => {
+      item.getSaveDC();
+      item.getAttackToHit();
+    });
   }
 
   /* -------------------------------------------- */
@@ -147,7 +111,7 @@ export default class Actor5e extends Actor {
    * @return {Number}       The XP required
    */
   getLevelExp(level) {
-    const levels = CONFIG.OrinsGate.CHARACTER_EXP_LEVELS;
+    const levels = CONFIG.DND5E.CHARACTER_EXP_LEVELS;
     return levels[Math.min(level, levels.length - 1)];
   }
 
@@ -160,23 +124,7 @@ export default class Actor5e extends Actor {
    */
   getCRExp(cr) {
     if (cr < 1.0) return Math.max(200 * cr, 10);
-    return CONFIG.OrinsGate.CR_EXP_LEVELS[cr];
-  }
-
-  /* -------------------------------------------- */
-
-  /**
-   * Return the power DC for this actor using a certain ability score
-   * @param {string} ability    The ability score, i.e. "str"
-   * @return {number}           The power DC
-   */
-  getPowerDC(ability) {
-    const actorData = this.data.data;
-    let bonus = getProperty(actorData, "bonuses.power.dc");
-    bonus = Number.isNumeric(bonus) ? parseInt(bonus) : 0;
-    ability = actorData.abilities[ability];
-    const prof = actorData.attributes.prof;
-    return 8 + (ability ? ability.mod : 0) + prof + bonus;
+    return CONFIG.DND5E.CR_EXP_LEVELS[cr];
   }
 
   /* -------------------------------------------- */
@@ -190,8 +138,103 @@ export default class Actor5e extends Actor {
       }
       return obj;
     }, {});
-    data.prof = this.data.data.attributes.prof;
+    data.prof = this.data.data.attributes.prof || 0;
     return data;
+  }
+
+  /* -------------------------------------------- */
+
+  /**
+   * Return the features which a character is awarded for each class level
+   * @param {string} className        The class name being added
+   * @param {string} subclassName     The subclass of the class being added, if any
+   * @param {number} level            The number of levels in the added class
+   * @param {number} priorLevel       The previous level of the added class
+   * @return {Promise<Item5e[]>}     Array of Item5e entities
+   */
+  static async getClassFeatures({className="", subclassName="", level=1, priorLevel=0}={}) {
+    className = className.toLowerCase();
+    subclassName = subclassName.slugify();
+
+    // Get the configuration of features which may be added
+    const clsConfig = CONFIG.DND5E.classFeatures[className];
+    if (!clsConfig) return [];
+
+    // Acquire class features
+    let ids = [];
+    for ( let [l, f] of Object.entries(clsConfig.features || {}) ) {
+      l = parseInt(l);
+      if ( (l <= level) && (l > priorLevel) ) ids = ids.concat(f);
+    }
+
+    // Acquire subclass features
+    const subConfig = clsConfig.subclasses[subclassName] || {};
+    for ( let [l, f] of Object.entries(subConfig.features || {}) ) {
+      l = parseInt(l);
+      if ( (l <= level) && (l > priorLevel) ) ids = ids.concat(f);
+    }
+
+    // Load item data for all identified features
+    const features = [];
+    for ( let id of ids ) {
+      features.push(await fromUuid(id));
+    }
+
+    // Class spells should always be prepared
+    for ( const feature of features ) {
+      if ( feature.type === "spell" ) {
+        const preparation = feature.data.data.preparation;
+        preparation.mode = "always";
+        preparation.prepared = true;
+      }
+    }
+    return features;
+  }
+
+  /* -------------------------------------------- */
+
+  /** @override */
+  async updateEmbeddedEntity(embeddedName, data, options={}) {
+    const createItems = embeddedName === "OwnedItem" ? await this._createClassFeatures(data) : [];
+    let updated = await super.updateEmbeddedEntity(embeddedName, data, options);
+    if ( createItems.length ) await this.createEmbeddedEntity("OwnedItem", createItems);
+    return updated;
+  }
+
+  /* -------------------------------------------- */
+
+  /**
+   * Create additional class features in the Actor when a class item is updated.
+   * @private
+   */
+  async _createClassFeatures(updated) {
+    let toCreate = [];
+    for (let u of updated instanceof Array ? updated : [updated]) {
+      const item = this.items.get(u._id);
+      if (!item || (item.data.type !== "class")) continue;
+      const updateData = expandObject(u);
+      const config = {
+        className: updateData.name || item.data.name,
+        subclassName: getProperty(updateData, "data.subclass") || item.data.data.subclass,
+        level: getProperty(updateData, "data.levels"),
+        priorLevel: item ? item.data.data.levels : 0
+      }
+
+      // Get and create features for an increased class level
+      let changed = false;
+      if ( config.level && (config.level > config.priorLevel)) changed = true;
+      if ( config.subclassName !== item.data.data.subclass ) changed = true;
+
+      // Get features to create
+      if ( changed ) {
+        const existing = new Set(this.items.map(i => i.name));
+        const features = await Actor5e.getClassFeatures(config);
+        for ( let f of features ) {
+          if ( !existing.has(f.name) ) toCreate.push(f);
+        }
+      }
+    }
+    return toCreate
   }
 
   /* -------------------------------------------- */
@@ -226,9 +269,6 @@ export default class Actor5e extends Actor {
     const required = xp.max - prior;
     const pct = Math.round((xp.value - prior) * 100 / required);
     xp.pct = Math.clamped(pct, 0, 100);
-
-    // Inventory encumbrance
-    data.attributes.encumbrance = this._computeEncumbrance(actorData);
   }
 
   /* -------------------------------------------- */
@@ -245,9 +285,9 @@ export default class Actor5e extends Actor {
     // Proficiency
     data.attributes.prof = Math.floor((Math.max(data.details.cr, 1) + 7) / 4);
 
-    // Powercaster Level
-    if ( data.attributes.powercasting && !Number.isNumeric(data.details.powerLevel) ) {
-      data.details.powerLevel = Math.max(data.details.cr, 1);
+    // Spellcaster Level
+    if ( data.attributes.spellcasting && !Number.isNumeric(data.details.spellLevel) ) {
+      data.details.spellLevel = Math.max(data.details.cr, 1);
     }
   }
 
@@ -274,36 +314,39 @@ export default class Actor5e extends Actor {
     if (actorData.type === 'vehicle') return;
 
     const data = actorData.data;
-    const flags = actorData.flags.orinsgate || {};
+    const flags = actorData.flags.dnd5e || {};
 
     // Skill modifiers
-    const feats = OrinsGate.characterFlags;
+    const feats = DND5E.characterFlags;
     const athlete = flags.remarkableAthlete;
     const joat = flags.jackOfAllTrades;
     const observant = flags.observantFeat;
     const skillBonus = Number.isNumeric(bonuses.skill) ? parseInt(bonuses.skill) :  0;
-    let round = Math.floor;
     for (let [id, skl] of Object.entries(data.skills)) {
-      skl.value = parseFloat(skl.value || 0);
+      skl.value = Math.clamped(Number(skl.value).toNearest(0.5), 0, 2) ?? 0;
+      let round = Math.floor;
 
-      // Apply Remarkable Athlete or Jack of all Trades
-      let multi = skl.value;
-      if ( athlete && (skl.value === 0) && feats.remarkableAthlete.abilities.includes(skl.ability) ) {
-        multi = 0.5;
+      // Remarkable
+      if ( athlete && (skl.value < 0.5) && feats.remarkableAthlete.abilities.includes(skl.ability) ) {
+        skl.value = 0.5;
         round = Math.ceil;
       }
-      if ( joat && (skl.value === 0 ) ) multi = 0.5;
+
+      // Jack of All Trades
+      if ( joat && (skl.value < 0.5) ) {
+        skl.value = 0.5;
+      }
+
+      // Polymorph Skill Proficiencies
+      if ( originalSkills ) {
+        skl.value = Math.max(skl.value, originalSkills[id].value);
+      }
 
       // Compute modifier
       skl.bonus = checkBonus + skillBonus;
       skl.mod = data.abilities[skl.ability].mod;
-      skl.prof = round(multi * data.attributes.prof);
+      skl.prof = round(skl.value * data.attributes.prof);
       skl.total = skl.mod + skl.prof + skl.bonus;
-
-      // If we merged skills when transforming, take the highest bonus here.
-      if (originalSkills && skl.value > 0.5) {
-        skl.total = Math.max(skl.total, originalSkills[id].total);
-      }
 
       // Compute passive bonus
       const passive = observant && (feats.observantFeat.skills.includes(id)) ? 5 : 0;
@@ -314,15 +357,15 @@ export default class Actor5e extends Actor {
   /* -------------------------------------------- */
 
   /**
-   * Prepare data related to the power-casting capabilities of the Actor
+   * Prepare data related to the spell-casting capabilities of the Actor
    * @private
    */
-  _computePowercastingProgression (actorData) {
+  _computeSpellcastingProgression (actorData) {
     if (actorData.type === 'vehicle') return;
-    const powers = actorData.data.powers;
+    const spells = actorData.data.spells;
     const isNPC = actorData.type === 'npc';
 
-    // Translate the list of classes into power-casting progression
+    // Translate the list of classes into spell-casting progression
     const progression = {
       total: 0,
       slot: 0,
@@ -332,13 +375,13 @@ export default class Actor5e extends Actor {
     // Keep track of the last seen caster in case we're in a single-caster situation.
     let caster = null;
 
-    // Tabulate the total power-casting progression
+    // Tabulate the total spell-casting progression
     const classes = this.data.items.filter(i => i.type === "class");
     for ( let cls of classes ) {
       const d = cls.data;
-      if ( d.powercasting === "none" ) continue;
+      if ( d.spellcasting === "none" ) continue;
       const levels = d.levels;
-      const prog = d.powercasting;
+      const prog = d.spellcasting;
 
       // Accumulate levels
       if ( prog !== "pact" ) {
@@ -356,41 +399,41 @@ export default class Actor5e extends Actor {
 
     // EXCEPTION: single-classed non-full progression rounds up, rather than down
     const isSingleClass = (progression.total === 1) && (progression.slot > 0);
-    if (!isNPC && isSingleClass && ['half', 'third'].includes(caster.data.powercasting) ) {
-      const denom = caster.data.powercasting === 'third' ? 3 : 2;
+    if (!isNPC && isSingleClass && ['half', 'third'].includes(caster.data.spellcasting) ) {
+      const denom = caster.data.spellcasting === 'third' ? 3 : 2;
       progression.slot = Math.ceil(caster.data.levels / denom);
     }
 
-    // EXCEPTION: NPC with an explicit powercaster level
-    if (isNPC && actorData.data.details.powerLevel) {
-      progression.slot = actorData.data.details.powerLevel;
+    // EXCEPTION: NPC with an explicit spell-caster level
+    if (isNPC && actorData.data.details.spellLevel) {
+      progression.slot = actorData.data.details.spellLevel;
     }
 
     // Look up the number of slots per level from the progression table
     const levels = Math.clamped(progression.slot, 0, 20);
-    const slots = OrinsGate.SPELL_SLOT_TABLE[levels - 1] || [];
-    for ( let [n, lvl] of Object.entries(powers) ) {
+    const slots = DND5E.SPELL_SLOT_TABLE[levels - 1] || [];
+    for ( let [n, lvl] of Object.entries(spells) ) {
       let i = parseInt(n.slice(-1));
       if ( Number.isNaN(i) ) continue;
-      if ( Number.isNumeric(lvl.override) ) lvl.max = Math.max(parseInt(lvl.override), 1);
+      if ( Number.isNumeric(lvl.override) ) lvl.max = Math.max(parseInt(lvl.override), 0);
       else lvl.max = slots[i-1] || 0;
-      lvl.value = Math.min(parseInt(lvl.value), lvl.max);
+      lvl.value = parseInt(lvl.value);
     }
 
     // Determine the Actor's pact magic level (if any)
     let pl = Math.clamped(progression.pact, 0, 20);
-    powers.pact = powers.pact || {};
-    if ( (pl === 0) && isNPC && Number.isNumeric(powers.pact.override) ) pl = actorData.data.details.powerLevel;
+    spells.pact = spells.pact || {};
+    if ( (pl === 0) && isNPC && Number.isNumeric(spells.pact.override) ) pl = actorData.data.details.spellLevel;
 
     // Determine the number of Warlock pact slots per level
     if ( pl > 0) {
-      powers.pact.level = Math.ceil(Math.min(10, pl) / 2);
-      if ( Number.isNumeric(powers.pact.override) ) powers.pact.max = Math.max(parseInt(powers.pact.override), 1);
-      else powers.pact.max = Math.max(1, Math.min(pl, 2), Math.min(pl - 8, 3), Math.min(pl - 13, 4));
-      powers.pact.value = Math.min(powers.pact.value, powers.pact.max);
+      spells.pact.level = Math.ceil(Math.min(10, pl) / 2);
+      if ( Number.isNumeric(spells.pact.override) ) spells.pact.max = Math.max(parseInt(spells.pact.override), 1);
+      else spells.pact.max = Math.max(1, Math.min(pl, 2), Math.min(pl - 8, 3), Math.min(pl - 13, 4));
+      spells.pact.value = Math.min(spells.pact.value, spells.pact.max);
     } else {
-      powers.pact.level = 0;
-      powers.pact.max = 0;
+      spells.pact.max = parseInt(spells.pact.override) || 0
+      spells.pact.level = spells.pact.max > 0 ? 1 : 0;
     }
   }
 
@@ -413,14 +456,14 @@ export default class Actor5e extends Actor {
       if ( !physicalItems.includes(i.type) ) return weight;
       const q = i.data.quantity || 0;
       const w = i.data.weight || 0;
-      return weight + Math.round(q * w * 10) / 10;
+      return weight + (q * w);
     }, 0);
 
-    // [Optional] add Currency Weight
-    if ( game.settings.get("orinsgate", "currencyWeight") ) {
+    // [Optional] add Currency Weight (for non-transformed actors)
+    if ( game.settings.get("dnd5e", "currencyWeight") && actorData.data.currency ) {
       const currency = actorData.data.currency;
-      const numCoins = Object.values(currency).reduce((val, denom) => val += denom, 0);
-      weight += Math.round((numCoins * 10) / CONFIG.OrinsGate.encumbrance.currencyPerWeight) / 10;
+      const numCoins = Object.values(currency).reduce((val, denom) => val += Math.max(denom, 0), 0);
+      weight += numCoins / CONFIG.DND5E.encumbrance.currencyPerWeight;
     }
 
     // Determine the encumbrance size class
@@ -432,12 +475,13 @@ export default class Actor5e extends Actor {
       huge: 4,
       grg: 8
     }[actorData.data.traits.size] || 1;
-    if ( this.getFlag("orinsgate", "powerfulBuild") ) mod = Math.min(mod * 2, 8);
+    if ( this.getFlag("dnd5e", "powerfulBuild") ) mod = Math.min(mod * 2, 8);
 
     // Compute Encumbrance percentage
-    const max = actorData.data.abilities.str.value * CONFIG.OrinsGate.encumbrance.strMultiplier * mod;
-    const pct = Math.clamped((weight* 100) / max, 0, 100);
-    return { value: weight, max, pct, encumbered: pct > (2/3) };
+    weight = weight.toNearest(0.1);
+    const max = actorData.data.abilities.str.value * CONFIG.DND5E.encumbrance.strMultiplier * mod;
+    const pct = Math.clamped((weight * 100) / max, 0, 100);
+    return { value: weight.toNearest(0.1), max, pct, encumbered: pct > (2/3) };
   }
 
   /* -------------------------------------------- */
@@ -464,13 +508,10 @@ export default class Actor5e extends Actor {
   /** @override */
   async update(data, options={}) {
 
-    // TODO: 0.7.1 compatibility - remove when stable
-    if ( !data.hasOwnProperty("data") ) data = expandObject(data);
-
     // Apply changes in Actor size to Token width/height
     const newSize = getProperty(data, "data.traits.size");
     if ( newSize && (newSize !== getProperty(this.data, "data.traits.size")) ) {
-      let size = CONFIG.OrinsGate.tokenSizes[newSize];
+      let size = CONFIG.DND5E.tokenSizes[newSize];
       if ( this.isToken ) this.token.update({height: size, width: size});
       else if ( !data["token.width"] && !hasProperty(data, "token.width") ) {
         data["token.height"] = size;
@@ -491,20 +532,82 @@ export default class Actor5e extends Actor {
   /* -------------------------------------------- */
 
   /** @override */
-  async createOwnedItem(itemData, options) {
+  async createEmbeddedEntity(embeddedName, itemData, options={}) {
 
-    // Assume NPCs are always proficient with weapons and always have powers prepared
-    if ( !this.isPC ) {
-      let t = itemData.type;
-      let initial = {};
-      if ( t === "weapon" ) initial["data.proficient"] = true;
-      if ( ["weapon", "equipment"].includes(t) ) initial["data.equipped"] = true;
-      if ( t === "power" ) initial["data.prepared"] = true;
-      mergeObject(itemData, initial);
-    }
-    return super.createOwnedItem(itemData, options);
+    // Pre-creation steps for owned items
+    if ( embeddedName === "OwnedItem" ) this._preCreateOwnedItem(itemData, options);
+
+    // Standard embedded entity creation
+    return super.createEmbeddedEntity(embeddedName, itemData, options);
   }
 
+  /* -------------------------------------------- */
+
+  /**
+   * A temporary shim function which will eventually (in core fvtt version 0.8.0+) be migrated to the new abstraction layer
+   * @param itemData
+   * @param options
+   * @private
+   */
+  _preCreateOwnedItem(itemData, options) {
+    if ( this.data.type === "vehicle" ) return;
+    const isNPC = this.data.type === 'npc';
+    let initial = {};
+    switch ( itemData.type ) {
+
+      case "weapon":
+        if ( getProperty(itemData, "data.equipped") === undefined ) {
+          initial["data.equipped"] = isNPC;       // NPCs automatically equip weapons
+        }
+        if ( getProperty(itemData, "data.proficient") === undefined ) {
+          if ( isNPC ) {
+            initial["data.proficient"] = true;    // NPCs automatically have equipment proficiency
+          } else {
+            const weaponProf = {
+              "natural": true,
+              "simpleM": "sim",
+              "simpleR": "sim",
+              "martialM": "mar",
+              "martialR": "mar"
+            }[itemData.data?.weaponType];         // Player characters check proficiency
+            const actorWeaponProfs = this.data.data.traits?.weaponProf?.value || [];
+            const hasWeaponProf = (weaponProf === true) || actorWeaponProfs.includes(weaponProf);
+            initial["data.proficient"] = hasWeaponProf;
+          }
+        }
+        break;
+
+      case "equipment":
+        if ( getProperty(itemData, "data.equipped") === undefined ) {
+          initial["data.equipped"] = isNPC;       // NPCs automatically equip equipment
+        }
+        if ( getProperty(itemData, "data.proficient") === undefined ) {
+          if ( isNPC ) {
+            initial["data.proficient"] = true;    // NPCs automatically have equipment proficiency
+          } else {
+            const armorProf = {
+              "natural": true,
+              "clothing": true,
+              "light": "lgt",
+              "medium": "med",
+              "heavy": "hvy",
+              "shield": "shl"
+            }[itemData.data?.armor?.type];        // Player characters check proficiency
+            const actorArmorProfs = this.data.data.traits?.armorProf?.value || [];
+            const hasEquipmentProf = (armorProf === true) || actorArmorProfs.includes(armorProf);
+            initial["data.proficient"] = hasEquipmentProf;
+          }
+        }
+        break;
+
+      case "spell":
+        if ( getProperty(itemData, "data.proficient") === undefined ) {
+          initial["data.prepared"] = isNPC;       // NPCs automatically prepare spells
+        }
+        break;
+    }
+    mergeObject(itemData, initial);
+  }
 
   /* -------------------------------------------- */
   /*  Gameplay Mechanics                          */
@@ -545,77 +648,16 @@ export default class Actor5e extends Actor {
       "data.attributes.hp.temp": tmp - dt,
       "data.attributes.hp.value": dh
     };
-    return this.update(updates);
-  }
 
-  /* -------------------------------------------- */
-
-  /**
-   * Cast a Power, consuming a power slot of a certain level
-   * @param {Item5e} item   The power being cast by the actor
-   * @param {Event} event   The originating user interaction which triggered the cast
-   */
-  async usePower(item, {configureDialog=true}={}) {
-    if ( item.data.type !== "power" ) throw new Error("Wrong Item type");
-    const itemData = item.data.data;
-
-    // Configure powercasting data
-    let lvl = itemData.level;
-    const usesSlots = (lvl > 0) && CONFIG.OrinsGate.powerUpcastModes.includes(itemData.preparation.mode);
-    const limitedUses = !!itemData.uses.per;
-    let consumeSlot = `power${lvl}`;
-    let consumeUse = false;
-    let placeTemplate = false;
-
-    // Configure power slot consumption and measured template placement from the form
-    if ( configureDialog && (usesSlots || item.hasAreaTarget || limitedUses) ) {
-      const usage = await AbilityUseDialog.create(item);
-      if ( usage === null ) return;
-
-      // Determine consumption preferences
-      consumeSlot = Boolean(usage.get("consumeSlot"));
-      consumeUse = Boolean(usage.get("consumeUse"));
-      placeTemplate = Boolean(usage.get("placeTemplate"));
-
-      // Determine the cast power level
-      const isPact = usage.get('level') === 'pact';
-      const lvl = isPact ? this.data.data.powers.pact.level : parseInt(usage.get("level"));
-      if ( lvl !== item.data.data.level ) {
-        const upcastData = mergeObject(item.data, {"data.level": lvl}, {inplace: false});
-        item = item.constructor.createOwned(upcastData, this);
-      }
-
-      // Denote the power slot being consumed
-      if ( consumeSlot ) consumeSlot = isPact ? "pact" : `power${lvl}`;
-    }
-
-    // Update Actor data
-    if ( usesSlots && consumeSlot && (lvl > 0) ) {
-      const slots = parseInt(this.data.data.powers[consumeSlot].value);
-      if ( slots === 0 || Number.isNaN(slots) ) {
-        return ui.notifications.error(game.i18n.localize("OrinsGate.PowerCastNoSlots"));
-      }
-      await this.update({
-        [`data.powers.${consumeSlot}.value`]: Math.max(parseInt(this.data.data.powers[consumeSlot].value) - 1, 0)
-      });
-    }
-
-    // Update Item data
-    if ( limitedUses && consumeUse ) {
-      const uses = parseInt(itemData.uses.value || 0);
-      if ( uses <= 0 ) ui.notifications.warn(game.i18n.format("OrinsGate.ItemNoUses", {name: item.name}));
-      await item.update({"data.uses.value": Math.max(parseInt(item.data.data.uses.value || 0) - 1, 0)})
-    }
-
-    // Initiate ability template placement workflow if selected
-    if ( placeTemplate && item.hasAreaTarget ) {
-      const template = AbilityTemplate.fromItem(item);
-      if ( template ) template.drawPreview(event);
-      if ( this.sheet.rendered ) this.sheet.minimize();
-    }
-
-    // Invoke the Item roll
-    return item.roll();
+    // Delegate damage application to a hook
+    // TODO replace this in the future with a better modifyTokenAttribute function in the core
+    const allowed = Hooks.call("modifyTokenAttribute", {
+      attribute: "attributes.hp",
+      value: amount,
+      isDelta: false,
+      isBar: true
+    }, updates);
+    return allowed !== false ? this.update(updates) : this;
   }
 
   /* -------------------------------------------- */
@@ -653,16 +695,16 @@ export default class Actor5e extends Actor {
     }
 
     // Reliable Talent applies to any skill check we have full or better proficiency in
-    const reliableTalent = (skl.value >= 1 && this.getFlag("orinsgate", "reliableTalent"));
+    const reliableTalent = (skl.value >= 1 && this.getFlag("dnd5e", "reliableTalent"));
 
     // Roll and return
     const rollData = mergeObject(options, {
       parts: parts,
       data: data,
-      title: game.i18n.format("OrinsGate.SkillPromptTitle", {skill: CONFIG.OrinsGate.skills[skillId]}),
-      halflingLucky: this.getFlag("orinsgate", "halflingLucky"),
+      title: game.i18n.format("DND5E.SkillPromptTitle", {skill: CONFIG.DND5E.skills[skillId]}),
+      halflingLucky: this.getFlag("dnd5e", "halflingLucky"),
       reliableTalent: reliableTalent,
-      messageData: {"flags.orinsgate.roll": {type: "skill", skillId }}
+      messageData: {"flags.dnd5e.roll": {type: "skill", skillId }}
     });
     rollData.speaker = options.speaker || ChatMessage.getSpeaker({actor: this});
     return d20Roll(rollData);
@@ -677,17 +719,17 @@ export default class Actor5e extends Actor {
    * @param {Object} options      Options which configure how ability tests or saving throws are rolled
    */
   rollAbility(abilityId, options={}) {
-    const label = CONFIG.OrinsGate.abilities[abilityId];
+    const label = CONFIG.DND5E.abilities[abilityId];
     new Dialog({
-      title: game.i18n.format("OrinsGate.AbilityPromptTitle", {ability: label}),
-      content: `<p>${game.i18n.format("OrinsGate.AbilityPromptText", {ability: label})}</p>`,
+      title: game.i18n.format("DND5E.AbilityPromptTitle", {ability: label}),
+      content: `<p>${game.i18n.format("DND5E.AbilityPromptText", {ability: label})}</p>`,
       buttons: {
         test: {
-          label: game.i18n.localize("OrinsGate.ActionAbil"),
+          label: game.i18n.localize("DND5E.ActionAbil"),
           callback: () => this.rollAbilityTest(abilityId, options)
         },
         save: {
-          label: game.i18n.localize("OrinsGate.ActionSave"),
+          label: game.i18n.localize("DND5E.ActionSave"),
           callback: () => this.rollAbilitySave(abilityId, options)
         }
       }
@@ -704,7 +746,7 @@ export default class Actor5e extends Actor {
    * @return {Promise<Roll>}      A Promise which resolves to the created Roll instance
    */
   rollAbilityTest(abilityId, options={}) {
-    const label = CONFIG.OrinsGate.abilities[abilityId];
+    const label = CONFIG.DND5E.abilities[abilityId];
     const abl = this.data.data.abilities[abilityId];
 
     // Construct parts
@@ -712,8 +754,8 @@ export default class Actor5e extends Actor {
     const data = {mod: abl.mod};
 
     // Add feat-related proficiency bonuses
-    const feats = this.data.flags.orinsgate || {};
-    if ( feats.remarkableAthlete && OrinsGate.characterFlags.remarkableAthlete.abilities.includes(abilityId) ) {
+    const feats = this.data.flags.dnd5e || {};
+    if ( feats.remarkableAthlete && DND5E.characterFlags.remarkableAthlete.abilities.includes(abilityId) ) {
       parts.push("@proficiency");
       data.proficiency = Math.ceil(0.5 * this.data.data.attributes.prof);
     }
@@ -738,9 +780,9 @@ export default class Actor5e extends Actor {
     const rollData = mergeObject(options, {
       parts: parts,
       data: data,
-      title: game.i18n.format("OrinsGate.AbilityPromptTitle", {ability: label}),
+      title: game.i18n.format("DND5E.AbilityPromptTitle", {ability: label}),
       halflingLucky: feats.halflingLucky,
-      messageData: {"flags.orinsgate.roll": {type: "ability", abilityId }}
+      messageData: {"flags.dnd5e.roll": {type: "ability", abilityId }}
     });
     rollData.speaker = options.speaker || ChatMessage.getSpeaker({actor: this});
     return d20Roll(rollData);
@@ -756,7 +798,7 @@ export default class Actor5e extends Actor {
    * @return {Promise<Roll>}      A Promise which resolves to the created Roll instance
    */
   rollAbilitySave(abilityId, options={}) {
-    const label = CONFIG.OrinsGate.abilities[abilityId];
+    const label = CONFIG.DND5E.abilities[abilityId];
     const abl = this.data.data.abilities[abilityId];
 
     // Construct parts
@@ -785,9 +827,9 @@ export default class Actor5e extends Actor {
     const rollData = mergeObject(options, {
       parts: parts,
       data: data,
-      title: game.i18n.format("OrinsGate.SavePromptTitle", {ability: label}),
-      halflingLucky: this.getFlag("orinsgate", "halflingLucky"),
-      messageData: {"flags.orinsgate.roll": {type: "save", abilityId }}
+      title: game.i18n.format("DND5E.SavePromptTitle", {ability: label}),
+      halflingLucky: this.getFlag("dnd5e", "halflingLucky"),
+      messageData: {"flags.dnd5e.roll": {type: "save", abilityId }}
     });
     rollData.speaker = options.speaker || ChatMessage.getSpeaker({actor: this});
     return d20Roll(rollData);
@@ -805,7 +847,7 @@ export default class Actor5e extends Actor {
     // Display a warning if we are not at zero HP or if we already have reached 3
     const death = this.data.data.attributes.death;
     if ( (this.data.data.attributes.hp.value > 0) || (death.failure >= 3) || (death.success >= 3)) {
-      ui.notifications.warn(game.i18n.localize("OrinsGate.DeathSaveUnnecessary"));
+      ui.notifications.warn(game.i18n.localize("DND5E.DeathSaveUnnecessary"));
       return null;
     }
 
@@ -813,6 +855,12 @@ export default class Actor5e extends Actor {
     const parts = [];
     const data = {};
     const speaker = options.speaker || ChatMessage.getSpeaker({actor: this});
+
+    // Diamond Soul adds proficiency
+    if ( this.getFlag("dnd5e", "diamondSoul") ) {
+      parts.push("@prof");
+      data.prof = this.data.data.attributes.prof;
+    }
 
     // Include a global actor ability save bonus
     const bonuses = getProperty(this.data.data, "bonuses.abilities") || {};
@@ -825,11 +873,11 @@ export default class Actor5e extends Actor {
     const rollData = mergeObject(options, {
       parts: parts,
       data: data,
-      title: game.i18n.localize("OrinsGate.DeathSavingThrow"),
+      title: game.i18n.localize("DND5E.DeathSavingThrow"),
       speaker: speaker,
-      halflingLucky: this.getFlag("orinsgate", "halflingLucky"),
+      halflingLucky: this.getFlag("dnd5e", "halflingLucky"),
       targetValue: 10,
-      messageData: {"flags.orinsgate.roll": {type: "death"}}
+      messageData: {"flags.dnd5e.roll": {type: "death"}}
     });
     rollData.speaker = speaker;
     const roll = await d20Roll(rollData);
@@ -837,7 +885,7 @@ export default class Actor5e extends Actor {
 
     // Take action depending on the result
     const success = roll.total >= 10;
-    const d20 = roll.dice[0].total;    
+    const d20 = roll.dice[0].total;
 
     // Save success
     if ( success ) {
@@ -850,7 +898,7 @@ export default class Actor5e extends Actor {
           "data.attributes.death.failure": 0,
           "data.attributes.hp.value": 1
         });
-        await ChatMessage.create({content: game.i18n.format("OrinsGate.DeathSaveCriticalSuccess", {name: this.name}), speaker});
+        await ChatMessage.create({content: game.i18n.format("DND5E.DeathSaveCriticalSuccess", {name: this.name}), speaker});
       }
 
       // 3 Successes = survive and reset checks
@@ -859,7 +907,7 @@ export default class Actor5e extends Actor {
           "data.attributes.death.success": 0,
           "data.attributes.death.failure": 0
         });
-        await ChatMessage.create({content: game.i18n.format("OrinsGate.DeathSaveSuccess", {name: this.name}), speaker});
+        await ChatMessage.create({content: game.i18n.format("DND5E.DeathSaveSuccess", {name: this.name}), speaker});
       }
 
       // Increment successes
@@ -871,7 +919,7 @@ export default class Actor5e extends Actor {
       let failures = (death.failure || 0) + (d20 === 1 ? 2 : 1);
       await this.update({"data.attributes.death.failure": Math.clamped(failures, 0, 3)});
       if ( failures >= 3 ) {  // 3 Failures = death
-        await ChatMessage.create({content: game.i18n.format("OrinsGate.DeathSaveFailure", {name: this.name}), speaker});
+        await ChatMessage.create({content: game.i18n.format("DND5E.DeathSaveFailure", {name: this.name}), speaker});
       }
     }
 
@@ -908,13 +956,13 @@ export default class Actor5e extends Actor {
 
     // If no class is available, display an error notification
     if ( !cls ) {
-      ui.notifications.error(game.i18n.format("OrinsGate.HitDiceWarn", {name: this.name, formula: denomination}));
+      ui.notifications.error(game.i18n.format("DND5E.HitDiceWarn", {name: this.name, formula: denomination}));
       return null;
     }
 
     // Prepare roll data
     const parts = [`1${denomination}`, "@abilities.con.mod"];
-    const title = game.i18n.localize("OrinsGate.HitDiceRoll");
+    const title = game.i18n.localize("DND5E.HitDiceRoll");
     const rollData = duplicate(this.data.data);
 
     // Call the roll helper utility
@@ -927,14 +975,14 @@ export default class Actor5e extends Actor {
       allowcritical: false,
       fastForward: !dialog,
       dialogOptions: {width: 350},
-      messageData: {"flags.orinsgate.roll": {type: "hitDie"}}
+      messageData: {"flags.dnd5e.roll": {type: "hitDie"}}
     });
     if ( !roll ) return null;
 
     // Adjust actor data
     await cls.update({"data.hitDiceUsed": cls.data.data.hitDiceUsed + 1});
     const hp = this.data.data.attributes.hp;
-    const dhp = Math.min(hp.max - hp.value, roll.total);
+    const dhp = Math.min(hp.max + (hp.tempmax ?? 0) - hp.value, roll.total);
     await this.update({"data.attributes.hp.value": hp.value + dhp});
     return roll;
   }
@@ -988,8 +1036,8 @@ export default class Actor5e extends Actor {
     }
 
     // Recover pact slots.
-    const pact = this.data.data.powers.pact;
-    updateData['data.powers.pact.value'] = pact.override || pact.max;
+    const pact = this.data.data.spells.pact;
+    updateData['data.spells.pact.value'] = pact.override || pact.max;
     await this.update(updateData);
 
     // Recover item uses
@@ -1004,19 +1052,26 @@ export default class Actor5e extends Actor {
     await this.updateEmbeddedEntity("OwnedItem", updateItems);
 
     // Display a Chat Message summarizing the rest effects
-    let restFlavor;
-    switch (game.settings.get("orinsgate", "restVariant")) {
-      case 'normal': restFlavor = game.i18n.localize("OrinsGate.ShortRestNormal"); break;
-      case 'gritty': restFlavor = game.i18n.localize(newDay ? "OrinsGate.ShortRestOvernight" : "OrinsGate.ShortRestGritty"); break;
-      case 'epic':  restFlavor = game.i18n.localize("OrinsGate.ShortRestEpic"); break;
-    }
-
     if ( chat ) {
+
+      // Summarize the rest duration
+      let restFlavor;
+      switch (game.settings.get("dnd5e", "restVariant")) {
+        case 'normal': restFlavor = game.i18n.localize("DND5E.ShortRestNormal"); break;
+        case 'gritty': restFlavor = game.i18n.localize(newDay ? "DND5E.ShortRestOvernight" : "DND5E.ShortRestGritty"); break;
+        case 'epic':  restFlavor = game.i18n.localize("DND5E.ShortRestEpic"); break;
+      }
+
+      // Summarize the health effects
+      let srMessage = "DND5E.ShortRestResultShort";
+      if ((dhd !== 0) && (dhp !== 0)) srMessage = "DND5E.ShortRestResult";
+
+      // Create a chat message
       ChatMessage.create({
         user: game.user._id,
         speaker: {actor: this, alias: this.name},
         flavor: restFlavor,
-        content: game.i18n.format("OrinsGate.ShortRestResult", {name: this.name, dice: -dhd, health: dhp})
+        content: game.i18n.format(srMessage, {name: this.name, dice: -dhd, health: dhp})
       });
     }
 
@@ -1033,16 +1088,16 @@ export default class Actor5e extends Actor {
   /* -------------------------------------------- */
 
   /**
-   * Take a long rest, recovering HP, HD, resources, and power slots
+   * Take a long rest, recovering HP, HD, resources, and spell slots
    * @param {boolean} dialog  Present a confirmation dialog window whether or not to take a long rest
    * @param {boolean} chat    Summarize the results of the rest workflow as a chat message
+   * @param {boolean} newDay  Whether the long rest carries over to a new day
    * @return {Promise}        A Promise which resolves once the long rest workflow has completed
    */
-  async longRest({dialog=true, chat=true}={}) {
+  async longRest({dialog=true, chat=true, newDay=true}={}) {
     const data = this.data.data;
 
     // Maybe present a confirmation dialog
-    let newDay = false;
     if ( dialog ) {
       try {
         newDay = await LongRestDialog.longRestDialog({actor: this});
@@ -1066,15 +1121,14 @@ export default class Actor5e extends Actor {
       }
     }
 
-    // Recover power slots
-    for ( let [k, v] of Object.entries(data.powers) ) {
-      if ( !v.max && !v.override ) continue;
-      updateData[`data.powers.${k}.value`] = v.override || v.max;
+    // Recover spell slots
+    for ( let [k, v] of Object.entries(data.spells) ) {
+      updateData[`data.spells.${k}.value`] = Number.isNumeric(v.override) ? v.override : (v.max ?? 0);
     }
 
     // Recover pact slots.
-    const pact = data.powers.pact;
-    updateData['data.powers.pact.value'] = pact.override || pact.max;
+    const pact = data.spells.pact;
+    updateData['data.spells.pact.value'] = pact.override || pact.max;
 
     // Determine the number of hit dice which may be recovered
     let recoverHD = Math.max(Math.floor(data.details.level / 2), 1);
@@ -1114,18 +1168,23 @@ export default class Actor5e extends Actor {
 
     // Display a Chat Message summarizing the rest effects
     let restFlavor;
-    switch (game.settings.get("orinsgate", "restVariant")) {
-      case 'normal': restFlavor = game.i18n.localize(newDay ? "OrinsGate.LongRestOvernight" : "OrinsGate.LongRestNormal"); break;
-      case 'gritty': restFlavor = game.i18n.localize("OrinsGate.LongRestGritty"); break;
-      case 'epic':  restFlavor = game.i18n.localize("OrinsGate.LongRestEpic"); break;
+    switch (game.settings.get("dnd5e", "restVariant")) {
+      case 'normal': restFlavor = game.i18n.localize(newDay ? "DND5E.LongRestOvernight" : "DND5E.LongRestNormal"); break;
+      case 'gritty': restFlavor = game.i18n.localize("DND5E.LongRestGritty"); break;
+      case 'epic':  restFlavor = game.i18n.localize("DND5E.LongRestEpic"); break;
     }
 
+    // Determine the chat message to display
     if ( chat ) {
+      let lrMessage = "DND5E.LongRestResultShort";
+      if((dhp !== 0) && (dhd !== 0)) lrMessage = "DND5E.LongRestResult";
+      else if ((dhp !== 0) && (dhd === 0)) lrMessage = "DND5E.LongRestResultHitPoints";
+      else if ((dhp === 0) && (dhd !== 0)) lrMessage = "DND5E.LongRestResultHitDice";
       ChatMessage.create({
         user: game.user._id,
         speaker: {actor: this, alias: this.name},
         flavor: restFlavor,
-        content: game.i18n.format("OrinsGate.LongRestResult", {name: this.name, health: dhp, dice: dhd})
+        content: game.i18n.format(lrMessage, {name: this.name, health: dhp, dice: dhd})
       });
     }
 
@@ -1148,7 +1207,7 @@ export default class Actor5e extends Actor {
    */
   convertCurrency() {
     const curr = duplicate(this.data.data.currency);
-    const convert = CONFIG.OrinsGate.currencyConversion;
+    const convert = CONFIG.DND5E.currencyConversion;
     for ( let [c, t] of Object.entries(convert) ) {
       let change = Math.floor(curr[c] / t.each);
       curr[c] -= (change * t.each);
@@ -1171,27 +1230,27 @@ export default class Actor5e extends Actor {
    * @param {boolean} [mergeSkills] Take the maximum of the skill proficiencies
    * @param {boolean} [keepClass] Keep proficiency bonus
    * @param {boolean} [keepFeats] Keep features
-   * @param {boolean} [keepPowers] Keep powers
+   * @param {boolean} [keepSpells] Keep spells
    * @param {boolean} [keepItems] Keep items
    * @param {boolean} [keepBio] Keep biography
    * @param {boolean} [keepVision] Keep vision
    * @param {boolean} [transformTokens] Transform linked tokens too
    */
   async transformInto(target, { keepPhysical=false, keepMental=false, keepSaves=false, keepSkills=false,
-    mergeSaves=false, mergeSkills=false, keepClass=false, keepFeats=false, keepPowers=false,
+    mergeSaves=false, mergeSkills=false, keepClass=false, keepFeats=false, keepSpells=false,
     keepItems=false, keepBio=false, keepVision=false, transformTokens=true}={}) {
 
     // Ensure the player is allowed to polymorph
-    const allowed = game.settings.get("orinsgate", "allowPolymorphing");
+    const allowed = game.settings.get("dnd5e", "allowPolymorphing");
     if ( !allowed && !game.user.isGM ) {
-      return ui.notifications.warn(game.i18n.localize("OrinsGate.PolymorphWarn"));
+      return ui.notifications.warn(game.i18n.localize("DND5E.PolymorphWarn"));
     }
 
     // Get the original Actor data and the new source data
-    const o = duplicate(this.data);
-    o.flags.orinsgate = o.flags.orinsgate || {};
-    o.flags.orinsgate.transformOptions = {mergeSkills, mergeSaves};
-    const source = duplicate(target.data);
+    const o = duplicate(this.toJSON());
+    o.flags.dnd5e = o.flags.dnd5e || {};
+    o.flags.dnd5e.transformOptions = {mergeSkills, mergeSaves};
+    const source = duplicate(target.toJSON());
 
     // Prepare new data to merge from the source
     const d = {
@@ -1199,6 +1258,7 @@ export default class Actor5e extends Actor {
       name: `${o.name} (${source.name})`, // Append the new shape to your old name
       data: source.data, // Get the data model of your new form
       items: source.items, // Get the items of your new form
+      effects: o.effects.concat(source.effects), // Combine active effects from both forms
       token: source.token, // New token configuration
       img: source.img, // New appearance
       permission: o.permission, // Use the original actor permissions
@@ -1216,12 +1276,12 @@ export default class Actor5e extends Actor {
     d.data.details.alignment = o.data.details.alignment; // Don't change alignment
     d.data.attributes.exhaustion = o.data.attributes.exhaustion; // Keep your prior exhaustion level
     d.data.attributes.inspiration = o.data.attributes.inspiration; // Keep inspiration
-    d.data.powers = o.data.powers; // Keep power slots
+    d.data.spells = o.data.spells; // Keep spell slots
 
     // Handle wildcard
     if ( source.token.randomImg ) {
       const images = await target.getTokenImages();
-      d.token.img = images[0];
+      d.token.img = images[Math.floor(Math.random() * images.length)];
     }
 
     // Keep Token configurations
@@ -1256,7 +1316,7 @@ export default class Actor5e extends Actor {
     d.items = d.items.concat(o.items.filter(i => {
       if ( i.type === "class" ) return keepClass;
       else if ( i.type === "feat" ) return keepFeats;
-      else if ( i.type === "power" ) return keepPowers;
+      else if ( i.type === "spell" ) return keepSpells;
       else return keepItems;
     }));
 
@@ -1264,7 +1324,7 @@ export default class Actor5e extends Actor {
     if (!keepClass && d.data.details.cr) {
       d.items.push({
         type: 'class',
-        name: game.i18n.localize('OrinsGate.PolymorphTmpClass'),
+        name: game.i18n.localize('DND5E.PolymorphTmpClass'),
         data: { levels: d.data.details.cr }
       });
     }
@@ -1276,8 +1336,8 @@ export default class Actor5e extends Actor {
     if (keepVision) d.data.traits.senses = o.data.traits.senses;
 
     // Set new data flags
-    if ( !this.isPolymorphed || !d.flags.orinsgate.originalActor ) d.flags.orinsgate.originalActor = this.id;
-    d.flags.orinsgate.isPolymorphed = true;
+    if ( !this.isPolymorphed || !d.flags.dnd5e.originalActor ) d.flags.dnd5e.originalActor = this.id;
+    d.flags.dnd5e.isPolymorphed = true;
 
     // Update unlinked Tokens in place since they can simply be re-dropped from the base actor
     if (this.isToken) {
@@ -1289,9 +1349,9 @@ export default class Actor5e extends Actor {
 
     // Update regular Actors by creating a new Actor with the Polymorphed data
     await this.sheet.close();
-    Hooks.callAll('orinsgate.transformActor', this, target, d, {
+    Hooks.callAll('dnd5e.transformActor', this, target, d, {
       keepPhysical, keepMental, keepSaves, keepSkills, mergeSaves, mergeSkills,
-      keepClass, keepFeats, keepPowers, keepItems, keepBio, keepVision, transformTokens
+      keepClass, keepFeats, keepSpells, keepItems, keepBio, keepVision, transformTokens
     });
     const newActor = await this.constructor.create(d, {renderSheet: true});
 
@@ -1305,7 +1365,7 @@ export default class Actor5e extends Actor {
       newTokenData.actorId = newActor.id;
       return newTokenData;
     });
-    return canvas.scene.updateEmbeddedEntity("Token", updates);
+    return canvas.scene?.updateEmbeddedEntity("Token", updates);
   }
 
   /* -------------------------------------------- */
@@ -1318,7 +1378,7 @@ export default class Actor5e extends Actor {
   async revertOriginalForm() {
     if ( !this.isPolymorphed ) return;
     if ( !this.owner ) {
-      return ui.notifications.warn(game.i18n.localize("OrinsGate.PolymorphRevertWarn"));
+      return ui.notifications.warn(game.i18n.localize("DND5E.PolymorphRevertWarn"));
     }
 
     // If we are reverting an unlinked token, simply replace it with the base actor prototype
@@ -1330,18 +1390,20 @@ export default class Actor5e extends Actor {
     }
 
     // Obtain a reference to the original actor
-    const original = game.actors.get(this.getFlag('orinsgate', 'originalActor'));
+    const original = game.actors.get(this.getFlag('dnd5e', 'originalActor'));
     if ( !original ) return;
 
     // Get the Tokens which represent this actor
-    const tokens = this.getActiveTokens(true);
-    const tokenUpdates = tokens.map(t => {
-      const tokenData = duplicate(original.data.token);
-      tokenData._id = t.id;
-      tokenData.actorId = original.id;
-      return tokenData;
-    });
-    canvas.scene.updateEmbeddedEntity("Token", tokenUpdates);
+    if ( canvas.ready ) {
+      const tokens = this.getActiveTokens(true);
+      const tokenUpdates = tokens.map(t => {
+        const tokenData = duplicate(original.data.token);
+        tokenData._id = t.id;
+        tokenData.actorId = original.id;
+        return tokenData;
+      });
+      canvas.scene.updateEmbeddedEntity("Token", tokenUpdates);
+    }
 
     // Delete the polymorphed Actor and maybe re-render the original sheet
     const isRendered = this.sheet.rendered;
@@ -1359,18 +1421,44 @@ export default class Actor5e extends Actor {
    */
   static addDirectoryContextOptions(html, entryOptions) {
     entryOptions.push({
-      name: 'OrinsGate.PolymorphRestoreTransformation',
+      name: 'DND5E.PolymorphRestoreTransformation',
       icon: '<i class="fas fa-backward"></i>',
       callback: li => {
         const actor = game.actors.get(li.data('entityId'));
         return actor.revertOriginalForm();
       },
       condition: li => {
-        const allowed = game.settings.get("orinsgate", "allowPolymorphing");
+        const allowed = game.settings.get("dnd5e", "allowPolymorphing");
         if ( !allowed && !game.user.isGM ) return false;
         const actor = game.actors.get(li.data('entityId'));
         return actor && actor.isPolymorphed;
       }
     });
+  }
+
+  /* -------------------------------------------- */
+  /*  DEPRECATED METHODS                          */
+  /* -------------------------------------------- */
+
+  /**
+   * @deprecated since dnd5e 0.97
+   */
+  getSpellDC(ability) {
+    console.warn(`The Actor5e#getSpellDC(ability) method has been deprecated in favor of Actor5e#data.data.abilities[ability].dc`);
+    return this.data.data.abilities[ability]?.dc;
+  }
+
+  /* -------------------------------------------- */
+
+  /**
+   * Cast a Spell, consuming a spell slot of a certain level
+   * @param {Item5e} item   The spell being cast by the actor
+   * @param {Event} event   The originating user interaction which triggered the cast
+   * @deprecated since dnd5e 1.2.0
+   */
+  async useSpell(item, {configureDialog=true}={}) {
+    console.warn(`The Actor5e#useSpell method has been deprecated in favor of Item5e#roll`);
+    if ( item.data.type !== "spell" ) throw new Error("Wrong Item type");
+    return item.roll();
   }
 }

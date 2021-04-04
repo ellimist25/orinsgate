@@ -3,7 +3,7 @@
 /* ----------------------------------------- */
 /*  Basic Structure                          */
 /* ----------------------------------------- */
-.orinsgate.sheet.actor.character {
+.dnd5e.sheet.actor.character {
   min-width: 720px;
   min-height: 680px;
 
@@ -132,7 +132,7 @@
   /* ----------------------------------------- */
 
   .inventory,
-  .powerbook {
+  .spellbook {
     .item-controls {
       flex: 0 0 68px;
       .item-toggle {
@@ -148,5 +148,33 @@
         }
       }
     }
+  }
+
+  /* ----------------------------------------- */
+  /*  Biography                                */
+  /* ----------------------------------------- */
+
+  .characteristics {
+    flex: 0 0 180px;
+    height: 100%;
+    padding: 0 3px 3px;
+    label {
+      flex: 0 0 20px;
+      .modesto();
+      font-size: 16px;
+      font-weight: normal;
+      line-height: 20px;
+      text-align: center;
+    }
+    textarea {
+      font-family: "Signika", serif;
+      font-size: 13px;
+      border: 1px solid @colorFaint;
+      resize: none;
+    }
+  }
+
+  .biography {
+    max-width: calc(100% - 180px);
   }
 }

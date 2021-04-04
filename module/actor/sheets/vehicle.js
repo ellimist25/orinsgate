@@ -12,7 +12,7 @@ export default class ActorSheet5eVehicle extends ActorSheet5e {
    */
   static get defaultOptions() {
     return mergeObject(super.defaultOptions, {
-      classes: ["orinsgate", "sheet", "actor", "vehicle"],
+      classes: ["dnd5e", "sheet", "actor", "vehicle"],
       width: 605,
       height: 680
     });
@@ -43,18 +43,22 @@ export default class ActorSheet5eVehicle extends ActorSheet5e {
 
     // Compute currency weight
     const totalCoins = Object.values(actorData.data.currency).reduce((acc, denom) => acc + denom, 0);
-    totalWeight += totalCoins / CONFIG.OrinsGate.encumbrance.currencyPerWeight;
+    totalWeight += totalCoins / CONFIG.DND5E.encumbrance.currencyPerWeight;
 
     // Vehicle weights are an order of magnitude greater.
-    totalWeight /= CONFIG.OrinsGate.encumbrance.vehicleWeightMultiplier;
+    totalWeight /= CONFIG.DND5E.encumbrance.vehicleWeightMultiplier;
 
     // Compute overall encumbrance
-    const enc = {
-      max: actorData.data.attributes.capacity.cargo,
-      value: Math.round(totalWeight * 10) / 10
-    };
-    enc.pct = Math.min(enc.value * 100 / enc.max, 99);
-    return enc;
+    const max = actorData.data.attributes.capacity.cargo;
+    const pct = Math.clamped((totalWeight * 100) / max, 0, 100);
+    return {value: totalWeight.toNearest(0.1), max, pct};
+  }
+
+  /* -------------------------------------------- */
+
+  /** @override */
+  _getMovementSpeed(actorData, largestPrimary=true) {
+    return super._getMovementSpeed(actorData, largestPrimary);
   }
 
   /* -------------------------------------------- */
@@ -69,12 +73,12 @@ export default class ActorSheet5eVehicle extends ActorSheet5e {
     // Determine crewed status
     const isCrewed = item.data.crewed;
     item.toggleClass = isCrewed ? 'active' : '';
-    item.toggleTitle = game.i18n.localize(`OrinsGate.${isCrewed ? 'Crewed' : 'Uncrewed'}`);
+    item.toggleTitle = game.i18n.localize(`DND5E.${isCrewed ? 'Crewed' : 'Uncrewed'}`);
 
     // Handle crew actions
     if (item.type === 'feat' && item.data.activation.type === 'crew') {
       item.crew = item.data.activation.cost;
-      item.cover = game.i18n.localize(`OrinsGate.${item.data.cover ? 'CoverTotal' : 'None'}`);
+      item.cover = game.i18n.localize(`DND5E.${item.data.cover ? 'CoverTotal' : 'None'}`);
       if (item.data.cover === .5) item.cover = '½';
       else if (item.data.cover === .75) item.cover = '¾';
       else if (item.data.cover === null) item.cover = '—';
@@ -95,66 +99,66 @@ export default class ActorSheet5eVehicle extends ActorSheet5e {
    */
   _prepareItems(data) {
     const cargoColumns = [{
-      label: game.i18n.localize('OrinsGate.Quantity'),
+      label: game.i18n.localize('DND5E.Quantity'),
       css: 'item-qty',
       property: 'quantity',
       editable: 'Number'
     }];
 
     const equipmentColumns = [{
-      label: game.i18n.localize('OrinsGate.Quantity'),
+      label: game.i18n.localize('DND5E.Quantity'),
       css: 'item-qty',
       property: 'data.quantity'
     }, {
-      label: game.i18n.localize('OrinsGate.AC'),
+      label: game.i18n.localize('DND5E.AC'),
       css: 'item-ac',
       property: 'data.armor.value'
     }, {
-      label: game.i18n.localize('OrinsGate.HP'),
+      label: game.i18n.localize('DND5E.HP'),
       css: 'item-hp',
       property: 'data.hp.value',
       editable: 'Number'
     }, {
-      label: game.i18n.localize('OrinsGate.Threshold'),
+      label: game.i18n.localize('DND5E.Threshold'),
       css: 'item-threshold',
       property: 'threshold'
     }];
 
     const features = {
       actions: {
-        label: game.i18n.localize('OrinsGate.ActionPl'),
+        label: game.i18n.localize('DND5E.ActionPl'),
         items: [],
         crewable: true,
         dataset: {type: 'feat', 'activation.type': 'crew'},
         columns: [{
-          label: game.i18n.localize('OrinsGate.VehicleCrew'),
+          label: game.i18n.localize('DND5E.VehicleCrew'),
           css: 'item-crew',
           property: 'crew'
         }, {
-          label: game.i18n.localize('OrinsGate.Cover'),
+          label: game.i18n.localize('DND5E.Cover'),
           css: 'item-cover',
           property: 'cover'
         }]
       },
       equipment: {
-        label: game.i18n.localize('OrinsGate.ItemTypeEquipment'),
+        label: game.i18n.localize('DND5E.ItemTypeEquipment'),
         items: [],
         crewable: true,
         dataset: {type: 'equipment', 'armor.type': 'vehicle'},
         columns: equipmentColumns
       },
       passive: {
-        label: game.i18n.localize('OrinsGate.Features'),
+        label: game.i18n.localize('DND5E.Features'),
         items: [],
         dataset: {type: 'feat'}
       },
       reactions: {
-        label: game.i18n.localize('OrinsGate.ReactionPl'),
+        label: game.i18n.localize('DND5E.ReactionPl'),
         items: [],
         dataset: {type: 'feat', 'activation.type': 'reaction'}
       },
       weapons: {
-        label: game.i18n.localize('OrinsGate.ItemTypeWeaponPl'),
+        label: game.i18n.localize('DND5E.ItemTypeWeaponPl'),
         items: [],
         crewable: true,
         dataset: {type: 'weapon', 'weapon-type': 'siege'},
@@ -164,7 +168,7 @@ export default class ActorSheet5eVehicle extends ActorSheet5e {
 
     const cargo = {
       crew: {
-        label: game.i18n.localize('OrinsGate.VehicleCrew'),
+        label: game.i18n.localize('DND5E.VehicleCrew'),
         items: data.data.cargo.crew,
         css: 'cargo-row crew',
         editableName: true,
@@ -172,7 +176,7 @@ export default class ActorSheet5eVehicle extends ActorSheet5e {
         columns: cargoColumns
       },
       passengers: {
-        label: game.i18n.localize('OrinsGate.VehiclePassengers'),
+        label: game.i18n.localize('DND5E.VehiclePassengers'),
         items: data.data.cargo.passengers,
         css: 'cargo-row passengers',
         editableName: true,
@@ -180,21 +184,21 @@ export default class ActorSheet5eVehicle extends ActorSheet5e {
         columns: cargoColumns
       },
       cargo: {
-        label: game.i18n.localize('OrinsGate.VehicleCargo'),
+        label: game.i18n.localize('DND5E.VehicleCargo'),
         items: [],
         dataset: {type: 'loot'},
         columns: [{
-          label: game.i18n.localize('OrinsGate.Quantity'),
+          label: game.i18n.localize('DND5E.Quantity'),
           css: 'item-qty',
           property: 'data.quantity',
           editable: 'Number'
         }, {
-          label: game.i18n.localize('OrinsGate.Price'),
+          label: game.i18n.localize('DND5E.Price'),
           css: 'item-price',
           property: 'data.price',
           editable: 'Number'
         }, {
-          label: game.i18n.localize('OrinsGate.Weight'),
+          label: game.i18n.localize('DND5E.Weight'),
           css: 'item-weight',
           property: 'data.weight',
           editable: 'Number'

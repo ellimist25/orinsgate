@@ -43,6 +43,15 @@
           "init": {
             "value": 0,
             "bonus": 0
+          },
+          "movement": {
+            "burrow": 0,
+            "climb": 0,
+            "fly": 0,
+            "swim": 0,
+            "walk": 30,
+            "units": "ft",
+            "hover": false
           }
         },
         "details": {
@@ -80,11 +89,15 @@
       },
       "creature": {
         "attributes": {
-          "powercasting": "int",
-          "speed": {
-            "value": "30 ft",
+          "senses": {
+            "darkvision": 0,
+            "blindsight": 0,
+            "tremorsense": 0,
+            "truesight": 0,
+            "units": "ft",
             "special": ""
-          }
+          },
+          "spellcasting": "int"
         },
         "details": {
           "alignment": "",
@@ -99,21 +112,17 @@
             "value": 0,
             "ability": "wis"
           },
+          "arc": {
+            "value": 0,
+            "ability": "int"
+          },
           "ath": {
             "value": 0,
             "ability": "str"
           },
-          "cul": {
-            "value": 0,
-            "ability": "int"
-          },
           "dec": {
             "value": 0,
             "ability": "cha"
-          },
-          "dme": {
-            "value": 0,
-            "ability": "int"
           },
           "his": {
             "value": 0,
@@ -139,10 +148,6 @@
             "value": 0,
             "ability": "int"
           },
-          "pil": {
-            "value": 0,
-            "ability": "dex"
-          },
           "prc": {
             "value": 0,
             "ability": "wis"
@@ -155,6 +160,10 @@
             "value": 0,
             "ability": "cha"
           },
+          "rel": {
+            "value": 0,
+            "ability": "int"
+          },
           "slt": {
             "value": 0,
             "ability": "dex"
@@ -166,68 +175,53 @@
           "sur": {
             "value": 0,
             "ability": "wis"
-          },
-          "tec": {
-            "value": 0,
-            "ability": "int"
           }
         },
         "traits": {
-          "senses": "",
           "languages": {
             "value": [],
             "custom": ""
           }
         },
-        "powers": {
-          "power1": {
+        "spells": {
+          "spell1": {
             "value": 0,
-            "max": 0,
             "override": null
           },
-          "power2": {
+          "spell2": {
             "value": 0,
-            "max": 0,
             "override": null
           },
-          "power3": {
+          "spell3": {
             "value": 0,
-            "max": 0,
             "override": null
           },
-          "power4": {
+          "spell4": {
             "value": 0,
-            "max": 0,
             "override": null
           },
-          "power5": {
+          "spell5": {
             "value": 0,
-            "max": 0,
             "override": null
           },
-          "power6": {
+          "spell6": {
             "value": 0,
-            "max": 0,
             "override": null
           },
-          "power7": {
+          "spell7": {
             "value": 0,
-            "max": 0,
             "override": null
           },
-          "power8": {
+          "spell8": {
             "value": 0,
-            "max": 0,
             "override": null
           },
-          "power9": {
+          "spell9": {
             "value": 0,
-            "max": 0,
             "override": null
           },
           "pact": {
             "value": 0,
-            "max": 0,
             "override": null
           }
         },
@@ -253,12 +247,13 @@
             "save": "",
             "skill": ""
           },
-          "power":  {
+          "spell":  {
             "dc": ""
           }
         }
       }
     },
+    "htmlFields": ["details.biography.value", "details.biography.public"],
     "character": {
       "templates": ["common", "creature"],
       "attributes": {
@@ -280,6 +275,7 @@
           "min": 0,
           "max": 300
         },
+        "appearance": "",
         "trait": "",
         "ideal": "",
         "bond": "",
@@ -326,7 +322,7 @@
         "type": "",
         "environment": "",
         "cr": 1,
-        "powerLevel": 0,
+        "spellLevel": 0,
         "xp": {
           "value": 10
         },
@@ -383,8 +379,7 @@
         "capacity": {
           "creature": "",
           "cargo": 0
-        },
-        "speed": ""
+        }
       },
       "traits": {
         "size": "lg",
@@ -404,7 +399,7 @@
     }
   },
   "Item": {
-    "types": ["weapon", "equipment", "consumable", "tool", "loot", "class", "power", "feat", "backpack"],
+    "types": ["weapon", "equipment", "consumable", "tool", "loot", "class", "spell", "feat", "backpack"],
     "templates": {
       "itemDescription": {
         "description": {
@@ -419,6 +414,7 @@
         "weight": 0,
         "price": 0,
         "attuned": false,
+        "attunement": 0,
         "equipped": false,
         "rarity": "",
         "identified": true
@@ -435,6 +431,7 @@
         },
         "target": {
           "value": null,
+          "width": null,
           "units": "",
           "type": ""
         },
@@ -468,7 +465,7 @@
         "save": {
           "ability": "",
           "dc": null,
-          "scaling": "power"
+          "scaling": "spell"
         }
       },
       "mountable": {
@@ -483,6 +480,7 @@
         }
       }
     },
+    "htmlFields": ["description.value", "description.chat", "description.unidentified"],
     "backpack": {
       "templates": ["itemDescription", "physicalItem"],
       "capacity": {
@@ -509,7 +507,7 @@
         "choices": [],
         "value": []
       },
-      "powercasting": "none"
+      "spellcasting": "none"
     },
     "consumable": {
       "templates": ["itemDescription", "physicalItem", "activatedEffect", "action"],
@@ -550,7 +548,7 @@
       "chatFlavor": "",
       "proficient": 0
     },
-    "power": {
+    "spell": {
       "templates": ["itemDescription", "activatedEffect", "action"],
       "level": 1,
       "school": "",
@@ -569,7 +567,7 @@
         "supply": 0
       },
       "preparation": {
-        "mode": null,
+        "mode": "prepared",
         "prepared": false
       },
       "scaling": {

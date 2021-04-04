@@ -13,8 +13,8 @@ export default class LongRestDialog extends Dialog {
   /** @override */
   static get defaultOptions() {
     return mergeObject(super.defaultOptions, {
-      template: "systems/orinsgate/templates/apps/long-rest.html",
-      classes: ["orinsgate", "dialog"]
+      template: "systems/dnd5e/templates/apps/long-rest.html",
+      classes: ["dnd5e", "dialog"]
     });
   }
 
@@ -23,7 +23,7 @@ export default class LongRestDialog extends Dialog {
   /** @override */
   getData() {
     const data = super.getData();
-    const variant = game.settings.get("orinsgate", "restVariant");
+    const variant = game.settings.get("dnd5e", "restVariant");
     data.promptNewDay = variant !== "gritty";     // It's always a new day when resting 1 week
     data.newDay = variant === "normal";           // It's probably a new day when resting normally (8 hours)
     return data;
@@ -47,9 +47,9 @@ export default class LongRestDialog extends Dialog {
             label: "Rest",
             callback: html => {
               let newDay = false;
-              if (game.settings.get("orinsgate", "restVariant") === "normal")
+              if (game.settings.get("dnd5e", "restVariant") === "normal")
                 newDay = html.find('input[name="newDay"]')[0].checked;
-              else if(game.settings.get("orinsgate", "restVariant") === "gritty")
+              else if(game.settings.get("dnd5e", "restVariant") === "gritty")
                 newDay = true;
               resolve(newDay);
             }

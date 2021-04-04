@@ -6,12 +6,12 @@
 
         <section class="header-details flexrow">
             <h1 class="charname">
-                <input name="name" type="text" value="{{actor.name}}" placeholder="{{ localize 'OrinsGate.Name' }}"/>
+                <input name="name" type="text" value="{{actor.name}}" placeholder="{{ localize 'DND5E.Name' }}"/>
             </h1>
 
             <aside class="header-exp flexcol">
                 <div class="cr">
-                    <label>{{ localize "OrinsGate.AbbreviationCR" }}</label>
+                    <label>{{ localize "DND5E.AbbreviationCR" }}</label>
                     <input name="data.details.cr" type="text" value="{{labels.cr}}" placeholder="1"/>
                 </div>
                 <div class="experience">
@@ -25,54 +25,52 @@
                     <span>{{lookup config.actorSizes data.traits.size}}</span>
                 </li>
                 <li>
-                    <input type="text" name="data.details.alignment" value="{{data.details.alignment}}" placeholder="{{ localize 'OrinsGate.Alignment' }}"/>
+                    <input type="text" name="data.details.alignment" value="{{data.details.alignment}}" placeholder="{{ localize 'DND5E.Alignment' }}"/>
                 </li>
                 <li>
-                    <input type="text" name="data.details.type" value="{{data.details.type}}" placeholder="{{ localize 'OrinsGate.Type' }}"/>
+                    <input type="text" name="data.details.type" value="{{data.details.type}}" placeholder="{{ localize 'DND5E.Type' }}"/>
                 </li>
                 <li>
-                    <input type="text" name="data.details.source" value="{{data.details.source}}" placeholder="{{ localize 'OrinsGate.Source' }}"/>
+                    <input type="text" name="data.details.source" value="{{data.details.source}}" placeholder="{{ localize 'DND5E.Source' }}"/>
                 </li>
             </ul>
 
             {{!-- Header Attributes --}}
             <ul class="attributes flexrow">
                <li class="attribute health">
-                    <h4 class="attribute-name box-title rollable">{{ localize "OrinsGate.HitPoints" }}</h4>
+                    <h4 class="attribute-name box-title rollable">{{ localize "DND5E.HitPoints" }}</h4>
                     <div class="attribute-value multiple">
-                        <input name="data.attributes.hp.value" type="text" value="{{data.attributes.hp.value}}"
-                               data-dtype="Number" placeholder="10"/>
+                        <input name="data.attributes.hp.value" type="text" value="{{data.attributes.hp.value}}" placeholder="10" data-dtype="Number"/>
                         <span class="sep"> / </span>
-                        <input name="data.attributes.hp.max" type="text" value="{{data.attributes.hp.max}}"
-                               data-dtype="Number" placeholder="10"/>
+                        <input name="data.attributes.hp.max" type="text" value="{{data.attributes.hp.max}}" placeholder="10" data-dtype="Number"/>
                     </div>
                     <footer class="attribute-footer">
-                        <input name="data.attributes.hp.formula" class="hpformula" type="text" placeholder="{{ localize 'OrinsGate.HPFormula' }}"
+                        <input name="data.attributes.hp.formula" class="hpformula" type="text" placeholder="{{ localize 'DND5E.HPFormula' }}"
                                value="{{data.attributes.hp.formula}}"/>
                     </footer>
                 </li>
 
                 <li class="attribute">
-                    <h4 class="attribute-name box-title">{{ localize "OrinsGate.ArmorClass" }}</h4>
+                    <h4 class="attribute-name box-title">{{ localize "DND5E.ArmorClass" }}</h4>
                     <div class="attribute-value">
-                        <input name="data.attributes.ac.value" type="text" value="{{data.attributes.ac.value}}"
-                               data-dtype="Number" placeholder="10"/>
+                        <input name="data.attributes.ac.value" type="number" value="{{data.attributes.ac.value}}" placeholder="10"/>
                     </div>
                     <footer class="attribute-footer">
-                        <span>{{ localize "OrinsGate.Proficiency" }}</span>
+                        <span>{{ localize "DND5E.Proficiency" }}</span>
                         <span>{{numberFormat data.attributes.prof decimals=0 sign=true}}</span>
                     </footer>
                 </li>
 
-                <li class="attribute">
-                    <h4 class="attribute-name box-title">{{ localize "OrinsGate.Speed" }}</h4>
+                <li class="attribute movement">
+                    <h4 class="attribute-name box-title">
+                        {{ localize "DND5E.Movement" }}
+                        <a class="config-button" data-action="movement" title="{{localize 'DND5E.MovementConfig'}}"><i class="fas fa-cog"></i></a>
+                    </h4>
                     <div class="attribute-value">
-                        <input name="data.attributes.speed.value" type="text"
-                               value="{{data.attributes.speed.value}}" placeholder="0"/>
+                        <span>{{movement.primary}}</span>
                     </div>
                     <footer class="attribute-footer">
-                        <input type="text" class="speed" name="data.attributes.speed.special"
-                               value="{{data.attributes.speed.special}}" placeholder="{{ localize 'OrinsGate.SpeedSpecial' }}"/>
+                        <span>{{movement.special}}</span>
                     </footer>
                 </li>
             </ul>
@@ -81,10 +79,11 @@
 
     {{!-- NPC Sheet Navigation --}}
     <nav class="sheet-navigation tabs" data-group="primary">
-        <a class="item active" data-tab="attributes">{{ localize "OrinsGate.Attributes" }}</a>
-        <a class="item" data-tab="features">{{ localize "OrinsGate.Features" }}</a>
-        <a class="item" data-tab="powerbook">{{ localize "OrinsGate.Powerbook" }}</a>
-        <a class="item" data-tab="biography">{{ localize "OrinsGate.Biography" }}</a>
+        <a class="item active" data-tab="attributes">{{ localize "DND5E.Attributes" }}</a>
+        <a class="item" data-tab="features">{{ localize "DND5E.Features" }}</a>
+        <a class="item" data-tab="spellbook">{{ localize "DND5E.Spellbook" }}</a>
+        <a class="item" data-tab="effects">{{ localize "DND5E.Effects" }}</a>
+        <a class="item" data-tab="biography">{{ localize "DND5E.Biography" }}</a>
     </nav>
 
     {{!-- NPC Sheet Body --}}
@@ -96,11 +95,11 @@
             {{#each data.abilities as |ability id|}}
                 <li class="ability {{#if ability.proficient}}proficient{{/if}}" data-ability="{{id}}">
                     <h4 class="ability-name box-title rollable">{{ability.label}}</h4>
-                    <input class="ability-score" name="data.abilities.{{id}}.value" type="text" value="{{ability.value}}" data-dtype="Number" placeholder="10"/>
+                    <input class="ability-score" name="data.abilities.{{id}}.value" type="number" value="{{ability.value}}" placeholder="10"/>
                     <div class="ability-modifiers flexrow">
                         <span class="ability-mod" title="Modifier">{{numberFormat ability.mod decimals=0 sign=true}}</span>
                         <input type="hidden" name="data.abilities.{{id}}.proficient" value="{{ability.proficient}}" data-dtype="Number"/>
-                        <a class="proficiency-toggle ability-proficiency" title="{{ localize 'OrinsGate.Proficiency' }}">{{{ability.icon}}}</a>
+                        <a class="proficiency-toggle ability-proficiency" title="{{ localize 'DND5E.Proficiency' }}">{{{ability.icon}}}</a>
                         <span class="ability-save" title="Saving Throw">{{numberFormat ability.save decimals=0 sign=true}}</span>
                     </div>
                 </li>
@@ -126,49 +125,49 @@
                 {{!-- Legendary Actions --}}
                 <div class="counters">
                     <div class="counter flexrow legendary">
-                        <h4>{{ localize "OrinsGate.LegAct" }}</h4>
+                        <h4>{{ localize "DND5E.LegAct" }}</h4>
                         <div class="counter-value">
-                            <input type="text" name="data.resources.legact.value" data-dtype="Number" placeholder="0"
-                                   value="{{data.resources.legact.value}}"/>
+                            <input name="data.resources.legact.value" type="number" value="{{data.resources.legact.value}}" placeholder="0"/>
                             <span class="sep">/</span>
-                            <input type="text" name="data.resources.legact.max" data-dtype="Number" placeholder="0"
-                                   value="{{data.resources.legact.max}}"/>
+                            <input name="data.resources.legact.max" type="number" value="{{data.resources.legact.max}}" placeholder="0"/>
                         </div>
                     </div>
                     <div class="counter flexrow legendary">
-                        <h4>{{ localize "OrinsGate.LegRes" }}</h4>
+                        <h4>{{ localize "DND5E.LegRes" }}</h4>
                         <div class="counter-value">
-                            <input type="text" name="data.resources.legres.value" data-dtype="Number" placeholder="0"
-                                   value="{{data.resources.legres.value}}"/>
+                            <input name="data.resources.legres.value" type="number" value="{{data.resources.legres.value}}" placeholder="0"/>
                             <span class="sep">/</span>
-                            <input type="text" name="data.resources.legres.max" data-dtype="Number" placeholder="0"
-                                   value="{{data.resources.legres.max}}"/>
+                            <input name="data.resources.legres.max" type="number" value="{{data.resources.legres.max}}" placeholder="0"/>
                         </div>
                     </div>
                     <div class="counter flexrow lair">
-                        <h4>{{ localize "OrinsGate.LairAct" }}</h4>
+                        <h4>{{ localize "DND5E.LairAct" }}</h4>
                         <div class="counter-value">
                             <input name="data.resources.lair.value" type="checkbox" value="{{data.resources.lair.value}}"
                                    data-dtype="Boolean" {{checked data.resources.lair.value}}/>
-                            <input name="data.resources.lair.initiative" type="text" value="{{data.resources.lair.initiative}}"
-                                   data-dtype="Number" placeholder="Init."/>
+                            <input name="data.resources.lair.initiative" type="number" value="{{data.resources.lair.initiative}}" placeholder="20"/>
                         </div>
                     </div>
                 </div>
 
                 {{!-- Traits --}}
-                {{> "systems/orinsgate/templates/actors/parts/actor-traits.html"}}
+                {{> "systems/dnd5e/templates/actors/parts/actor-traits.html"}}
             </section>
         </div>
 
         {{!-- Features Tab --}}
         <div class="tab features flexcol" data-group="primary" data-tab="features">
-            {{> "systems/orinsgate/templates/actors/parts/actor-features.html" sections=features}}
+            {{> "systems/dnd5e/templates/actors/parts/actor-features.html" sections=features}}
         </div>
 
-        {{!-- Powerbook Tab --}}
-        <div class="tab powerbook flexcol" data-group="primary" data-tab="powerbook">
-            {{> "systems/orinsgate/templates/actors/parts/actor-powerbook.html"}}
+        {{!-- Spellbook Tab --}}
+        <div class="tab spellbook flexcol" data-group="primary" data-tab="spellbook">
+            {{> "systems/dnd5e/templates/actors/parts/actor-spellbook.html"}}
+        </div>
+
+        {{!-- Effects Tab --}}
+        <div class="tab effects flexcol" data-group="primary" data-tab="effects">
+            {{> "systems/dnd5e/templates/actors/parts/active-effects.html"}}
         </div>
 
         {{!-- Biography Tab --}}
