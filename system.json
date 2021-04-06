@@ -1,7 +1,7 @@
 {
   "name": "orinsgate",
   "title": "Orin's Gate",
-  "description": "A homebrew system based closely on D&D 5th Edition.",
+  "description": "A homebrew system based closely on D&D 5th Edition. Designed by Dpad Gam3r.",
   "version": "1.2.4",
   "author": "Ellimist",
   "scripts": [],
@@ -93,7 +93,7 @@
   "secondaryTokenAttribute": null,
   "minimumCoreVersion": "0.7.6",
   "compatibleCoreVersion": "0.7.9",
-  "url": "https://gitlab.com/foundrynet/dnd5e",
-  "manifest": "https://gitlab.com/foundrynet/dnd5e/raw/master/system.json",
-  "download": "https://gitlab.com/foundrynet/dnd5e/-/archive/release-1.2.4/dnd5e-release-1.2.4.zip"
+  "url": "https://github.com/ellimist25/orinsgate",
+  "manifest": "https://raw.githubusercontent.com/ellimist25/orinsgate/master/system.json",
+  "download": "https://github.com/ellimist25/orinsgate/archive/refs/heads/master.zip"
 }
