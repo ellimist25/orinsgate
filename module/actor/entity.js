@@ -13,7 +13,7 @@ export default class Actor5e extends Actor {
    * @return {boolean}
    */
   get isPolymorphed() {
-    return this.getFlag("dnd5e", "isPolymorphed") || false;
+    return this.getFlag("orinsgate", "isPolymorphed") || false;
   }
 
   /* -------------------------------------------- */
@@ -475,7 +475,7 @@ export default class Actor5e extends Actor {
       huge: 4,
       grg: 8
     }[actorData.data.traits.size] || 1;
-    if ( this.getFlag("dnd5e", "powerfulBuild") ) mod = Math.min(mod * 2, 8);
+    if ( this.getFlag("orinsgate", "powerfulBuild") ) mod = Math.min(mod * 2, 8);
 
     // Compute Encumbrance percentage
     weight = weight.toNearest(0.1);
@@ -695,14 +695,14 @@ export default class Actor5e extends Actor {
     }
 
     // Reliable Talent applies to any skill check we have full or better proficiency in
-    const reliableTalent = (skl.value >= 1 && this.getFlag("dnd5e", "reliableTalent"));
+    const reliableTalent = (skl.value >= 1 && this.getFlag("orinsgate", "reliableTalent"));
 
     // Roll and return
     const rollData = mergeObject(options, {
       parts: parts,
       data: data,
       title: game.i18n.format("DND5E.SkillPromptTitle", {skill: CONFIG.DND5E.skills[skillId]}),
-      halflingLucky: this.getFlag("dnd5e", "halflingLucky"),
+      halflingLucky: this.getFlag("orinsgate", "halflingLucky"),
       reliableTalent: reliableTalent,
       messageData: {"flags.dnd5e.roll": {type: "skill", skillId }}
     });
@@ -828,7 +828,7 @@ export default class Actor5e extends Actor {
       parts: parts,
       data: data,
       title: game.i18n.format("DND5E.SavePromptTitle", {ability: label}),
-      halflingLucky: this.getFlag("dnd5e", "halflingLucky"),
+      halflingLucky: this.getFlag("orinsgate", "halflingLucky"),
       messageData: {"flags.dnd5e.roll": {type: "save", abilityId }}
     });
     rollData.speaker = options.speaker || ChatMessage.getSpeaker({actor: this});
@@ -857,7 +857,7 @@ export default class Actor5e extends Actor {
     const speaker = options.speaker || ChatMessage.getSpeaker({actor: this});
 
     // Diamond Soul adds proficiency
-    if ( this.getFlag("dnd5e", "diamondSoul") ) {
+    if ( this.getFlag("orinsgate", "diamondSoul") ) {
       parts.push("@prof");
       data.prof = this.data.data.attributes.prof;
     }
@@ -875,7 +875,7 @@ export default class Actor5e extends Actor {
       data: data,
       title: game.i18n.localize("DND5E.DeathSavingThrow"),
       speaker: speaker,
-      halflingLucky: this.getFlag("dnd5e", "halflingLucky"),
+      halflingLucky: this.getFlag("orinsgate", "halflingLucky"),
       targetValue: 10,
       messageData: {"flags.dnd5e.roll": {type: "death"}}
     });

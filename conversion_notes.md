@@ -1,14 +1,12 @@
-spell -> power
-arcana -> dme
-arc -> dme
-religion -> cultures (cul)
-
+Spell -> Power
+Cantrip -> Trick
+Arcana -> DME
+Religion -> Cultures
 dnd5e -> orinsgate
 DND5E -> OrinsGate
 DnD5e -> OrinsGate
+DnD5E -> OrinsGate
 
 New Skills:
-technology - tec
-piloting - pil
-
-Find and replace scripts:
+Technology - tec
+Piloting - pil
