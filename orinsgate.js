@@ -89,12 +89,12 @@ Hooks.once("init", function() {
 
   // Register sheet application classes
   Actors.unregisterSheet("core", ActorSheet);
-  Actors.registerSheet("dnd5e", ActorSheet5eCharacter, {
+  Actors.registerSheet("orinsgate", ActorSheet5eCharacter, {
     types: ["character"],
     makeDefault: true,
     label: "DND5E.SheetClassCharacter"
   });
-  Actors.registerSheet("dnd5e", ActorSheet5eNPC, {
+  Actors.registerSheet("orinsgate", ActorSheet5eNPC, {
     types: ["npc"],
     makeDefault: true,
     label: "DND5E.SheetClassNPC"
@@ -105,7 +105,7 @@ Hooks.once("init", function() {
     label: "DND5E.SheetClassVehicle"
   });
   Items.unregisterSheet("core", ItemSheet);
-  Items.registerSheet("dnd5e", ItemSheet5e, {
+  Items.registerSheet("orinsgate", ItemSheet5e, {
     makeDefault: true,
     label: "DND5E.SheetClassItem"
   });
@@ -165,7 +165,7 @@ Hooks.once("ready", function() {
 
   // Determine whether a system migration is required and feasible
   if ( !game.user.isGM ) return;
-  const currentVersion = game.settings.get("dnd5e", "systemMigrationVersion");
+  const currentVersion = game.settings.get("orinsgate", "systemMigrationVersion");
   const NEEDS_MIGRATION_VERSION = "1.2.1";
   const COMPATIBLE_MIGRATION_VERSION = 0.80;
   const needsMigration = currentVersion && isNewerVersion(NEEDS_MIGRATION_VERSION, currentVersion);
@@ -186,7 +186,7 @@ Hooks.once("ready", function() {
 Hooks.on("canvasInit", function() {
 
   // Extend Diagonal Measurement
-  canvas.grid.diagonalRule = game.settings.get("dnd5e", "diagonalMovement");
+  canvas.grid.diagonalRule = game.settings.get("orinsgate", "diagonalMovement");
   SquareGrid.prototype.measureDistances = measureDistances;
 
   // Extend Token Resource Bars
@@ -207,7 +207,7 @@ Hooks.on("renderChatMessage", (app, html, data) => {
   chat.highlightCriticalSuccessFailure(app, html, data);
 
   // Optionally collapse the content
-  if (game.settings.get("dnd5e", "autoCollapseItemCards")) html.find(".card-content").hide();
+  if (game.settings.get("orinsgate", "autoCollapseItemCards")) html.find(".card-content").hide();
 });
 Hooks.on("getChatLogEntryContext", chat.addChatMessageContextOptions);
 Hooks.on("renderChatLog", (app, html, data) => Item5e.chatListeners(html));

@@ -460,7 +460,7 @@ export default class Actor5e extends Actor {
     }, 0);
 
     // [Optional] add Currency Weight (for non-transformed actors)
-    if ( game.settings.get("dnd5e", "currencyWeight") && actorData.data.currency ) {
+    if ( game.settings.get("orinsgate", "currencyWeight") && actorData.data.currency ) {
       const currency = actorData.data.currency;
       const numCoins = Object.values(currency).reduce((val, denom) => val += Math.max(denom, 0), 0);
       weight += numCoins / CONFIG.DND5E.encumbrance.currencyPerWeight;
@@ -1056,7 +1056,7 @@ export default class Actor5e extends Actor {
 
       // Summarize the rest duration
       let restFlavor;
-      switch (game.settings.get("dnd5e", "restVariant")) {
+      switch (game.settings.get("orinsgate", "restVariant")) {
         case 'normal': restFlavor = game.i18n.localize("DND5E.ShortRestNormal"); break;
         case 'gritty': restFlavor = game.i18n.localize(newDay ? "DND5E.ShortRestOvernight" : "DND5E.ShortRestGritty"); break;
         case 'epic':  restFlavor = game.i18n.localize("DND5E.ShortRestEpic"); break;
@@ -1168,7 +1168,7 @@ export default class Actor5e extends Actor {
 
     // Display a Chat Message summarizing the rest effects
     let restFlavor;
-    switch (game.settings.get("dnd5e", "restVariant")) {
+    switch (game.settings.get("orinsgate", "restVariant")) {
       case 'normal': restFlavor = game.i18n.localize(newDay ? "DND5E.LongRestOvernight" : "DND5E.LongRestNormal"); break;
       case 'gritty': restFlavor = game.i18n.localize("DND5E.LongRestGritty"); break;
       case 'epic':  restFlavor = game.i18n.localize("DND5E.LongRestEpic"); break;
@@ -1241,7 +1241,7 @@ export default class Actor5e extends Actor {
     keepItems=false, keepBio=false, keepVision=false, transformTokens=true}={}) {
 
     // Ensure the player is allowed to polymorph
-    const allowed = game.settings.get("dnd5e", "allowPolymorphing");
+    const allowed = game.settings.get("orinsgate", "allowPolymorphing");
     if ( !allowed && !game.user.isGM ) {
       return ui.notifications.warn(game.i18n.localize("DND5E.PolymorphWarn"));
     }
@@ -1428,7 +1428,7 @@ export default class Actor5e extends Actor {
         return actor.revertOriginalForm();
       },
       condition: li => {
-        const allowed = game.settings.get("dnd5e", "allowPolymorphing");
+        const allowed = game.settings.get("orinsgate", "allowPolymorphing");
         if ( !allowed && !game.user.isGM ) return false;
         const actor = game.actors.get(li.data('entityId'));
         return actor && actor.isPolymorphed;

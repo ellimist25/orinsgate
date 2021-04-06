@@ -3,7 +3,7 @@ export const registerSystemSettings = function() {
   /**
    * Track the system version upon which point a migration was last applied
    */
-  game.settings.register("dnd5e", "systemMigrationVersion", {
+  game.settings.register("orinsgate", "systemMigrationVersion", {
     name: "System Migration Version",
     scope: "world",
     config: false,
@@ -14,7 +14,7 @@ export const registerSystemSettings = function() {
   /**
    * Register resting variants
    */
-  game.settings.register("dnd5e", "restVariant", {
+  game.settings.register("orinsgate", "restVariant", {
     name: "SETTINGS.5eRestN",
     hint: "SETTINGS.5eRestL",
     scope: "world",
@@ -31,7 +31,7 @@ export const registerSystemSettings = function() {
   /**
    * Register diagonal movement rule setting
    */
-  game.settings.register("dnd5e", "diagonalMovement", {
+  game.settings.register("orinsgate", "diagonalMovement", {
     name: "SETTINGS.5eDiagN",
     hint: "SETTINGS.5eDiagL",
     scope: "world",
@@ -49,7 +49,7 @@ export const registerSystemSettings = function() {
   /**
    * Register Initiative formula setting
    */
-  game.settings.register("dnd5e", "initiativeDexTiebreaker", {
+  game.settings.register("orinsgate", "initiativeDexTiebreaker", {
     name: "SETTINGS.5eInitTBN",
     hint: "SETTINGS.5eInitTBL",
     scope: "world",
@@ -61,7 +61,7 @@ export const registerSystemSettings = function() {
   /**
    * Require Currency Carrying Weight
    */
-  game.settings.register("dnd5e", "currencyWeight", {
+  game.settings.register("orinsgate", "currencyWeight", {
     name: "SETTINGS.5eCurWtN",
     hint: "SETTINGS.5eCurWtL",
     scope: "world",
@@ -73,7 +73,7 @@ export const registerSystemSettings = function() {
   /**
    * Option to disable XP bar for session-based or story-based advancement.
    */
-  game.settings.register("dnd5e", "disableExperienceTracking", {
+  game.settings.register("orinsgate", "disableExperienceTracking", {
     name: "SETTINGS.5eNoExpN",
     hint: "SETTINGS.5eNoExpL",
     scope: "world",
@@ -85,7 +85,7 @@ export const registerSystemSettings = function() {
   /**
    * Option to automatically collapse Item Card descriptions
    */
-  game.settings.register("dnd5e", "autoCollapseItemCards", {
+  game.settings.register("orinsgate", "autoCollapseItemCards", {
     name: "SETTINGS.5eAutoCollapseCardN",
     hint: "SETTINGS.5eAutoCollapseCardL",
     scope: "client",
